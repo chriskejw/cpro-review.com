@@ -1,91 +1,120 @@
-// ------------------- Newsletter Subscription -------------------
-document.querySelectorAll('#newsletter-form').forEach(form => {
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const name = this.querySelector('#name').value;
-        const email = this.querySelector('#email').value;
-        const msgEl = this.nextElementSibling; // newsletter-msg <p>
+document.addEventListener("DOMContentLoaded", () => {
+  // --------------------- Load Header & Footer ---------------------
+  loadPart("header-placeholder", "header.html");
+  loadPart("footer-placeholder", "footer.html");
 
-        // Send to Google Sheets
-        fetch('https://script.google.com/macros/s/AKfycbwGvCZuDpuV7T60mUMcePUt0SN5d7MUhQ9xQ3Lmmivj33lSKo6Csn9xv1IPhOOVT4li/exec', {
-            method: 'POST',
-            body: JSON.stringify({name: name, email: email})
-        })
-        .then(response => response.json())
-        .then(data => {
-            msgEl.textContent = "Subscribed successfully!";
-            this.reset();
+  // --------------------- Blog Cards ---------------------
+  const cardContainer = document.querySelector(".card-grid");
+  let allCards = [];
+  let cardsPerPage = 3;
+  let currentIndex = 0;
 
-            // Send EmailJS notification
-            emailjs.send('service_8fe6yij', 'template_wxvjwg9', {
-                from_name: name,
-                from_email: email,
-                message: "New newsletter subscription"
-            });
-        })
-        .catch(error => {
-            msgEl.textContent = "Subscription failed. Try again.";
-            console.error(error);
-        });
+  if (cardContainer) {
+    fetch("cards.json")
+      .then(res => res.json())
+      .then(cards => {
+        allCards = cards;
+        loadMoreCards(); // Load first batch
+
+        if (cards.length > cardsPerPage) {
+          const loadMoreBtn = document.createElement("button");
+          loadMoreBtn.textContent = "Load More Posts";
+          loadMoreBtn.id = "loadMoreBtn";
+          loadMoreBtn.style.margin = "1rem 0";
+          cardContainer.after(loadMoreBtn);
+          loadMoreBtn.addEventListener("click", loadMoreCards);
+        }
+      })
+      .catch(err => console.error("Error loading cards:", err));
+  }
+
+  function loadMoreCards() {
+    const nextIndex = currentIndex + cardsPerPage;
+    const cardsToLoad = allCards.slice(currentIndex, nextIndex);
+
+    cardsToLoad.forEach(card => {
+      const cardEl = document.createElement("article");
+      cardEl.className = "card";
+      cardEl.innerHTML = `
+        <h3><a href="${card.link}">${card.title}</a></h3>
+        <small>${card.date}</small>
+        <p>${card.description}</p>
+        <a class="read-more" href="${card.link}">Read More →</a>
+      `;
+      cardContainer.appendChild(cardEl);
+
+      setTimeout(() => {
+        cardEl.classList.add("visible");
+        cardEl.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 50);
     });
-});
 
-// ------------------- Star Ratings -------------------
-const starsContainers = document.querySelectorAll('.star-rating');
+    currentIndex = nextIndex;
 
-starsContainers.forEach(container => {
-    const stars = container.querySelectorAll('span');
-    const postId = container.closest('article') ? container.closest('article').id : 'post1'; // fallback
-
-    let currentRating = localStorage.getItem(`${postId}-rating`) || 0;
-
-    function updateStars(rating) {
-        stars.forEach(star => {
-            star.classList.remove('selected');
-            if (star.dataset.value <= rating) {
-                star.classList.add('selected');
-            }
-        });
+    if (currentIndex >= allCards.length) {
+      const btn = document.getElementById("loadMoreBtn");
+      if (btn) btn.style.display = "none";
     }
+  }
 
-    updateStars(currentRating);
+  // --------------------- Newsletter ---------------------
+  const subscribeForm = document.getElementById("subscribeForm");
+  if (subscribeForm) {
+    subscribeForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const msgEl = document.getElementById("msg");
 
-    stars.forEach(star => {
-        star.addEventListener('click', () => {
-            currentRating = star.dataset.value;
-            localStorage.setItem(`${postId}-rating`, currentRating);
-            const msgEl = container.nextElementSibling; // rating-msg <p>
-            if (msgEl) msgEl.textContent = `Thanks for rating: ${currentRating}⭐`;
-            updateStars(currentRating);
-        });
+      try {
+        const response = await fetch(
+          "https://script.google.com/macros/s/YOUR_GOOGLE_SCRIPT_ID/exec",
+          { method: "POST", body: JSON.stringify({ name, email }) }
+        );
+        await response.json();
+        msgEl.textContent = "Subscribed successfully!";
+        subscribeForm.reset();
+      } catch {
+        msgEl.textContent = "Error subscribing. Try again.";
+      }
     });
-});
+  }
 
-// ------------------- Initialize EmailJS -------------------
-(function() {
-    emailjs.init("Ow9sGUE6hSO-EpF_T");
-})();
-
-// ------------------- Contact Form -------------------
-document.querySelectorAll('#contact-form').forEach(form => {
-    form.addEventListener('submit', function(e){
-        e.preventDefault();
-        const name = this.querySelector('#contact-name').value;
-        const email = this.querySelector('#contact-email').value;
-        const message = this.querySelector('#contact-message').value;
-        const msgEl = this.nextElementSibling; // contact-msg <p>
-
-        emailjs.send('service_8fe6yij', 'template_wxvjwg9', {
-            from_name: name,
-            from_email: email,
-            message: message
-        })
+  // --------------------- Contact Form ---------------------
+  const contactForm = document.getElementById("contactForm");
+  if (contactForm) {
+    contactForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      emailjs
+        .send(
+          "service_8fe6yij",
+          "template_wxvjwg9",
+          {
+            from_name: document.getElementById("contactName").value,
+            from_email: document.getElementById("contactEmail").value,
+            message: document.getElementById("contactMessage").value
+          }
+        )
         .then(() => {
-            msgEl.textContent = "Message sent!";
-            this.reset();
-        }, (err) => {
-            msgEl.textContent = "Failed to send message.";
-            console.error("EmailJS error:", err);
+          document.getElementById("contactMsg").textContent =
+            "Message sent successfully!";
+          contactForm.reset();
+        })
+        .catch((err) => {
+          document.getElementById("contactMsg").textContent =
+            "Failed to send message.";
+          console.error(err);
         });
     });
+  }
 });
+
+// --------------------- Utility: Load Header/Footer ---------------------
+function loadPart(placeholderId, file) {
+  fetch(file)
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById(placeholderId).innerHTML = data;
+    })
+    .catch(err => console.error("Error loading file:", file, err));
+}

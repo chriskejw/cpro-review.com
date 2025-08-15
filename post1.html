@@ -1,90 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Post 1 - CPro Review</title>
-
-<!-- Google Font -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
-<!-- Bootstrap -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<!-- Custom CSS -->
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post 1 - My First Blog</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="scripts.js" defer></script>
 </head>
 <body>
+  <div id="header-placeholder"></div>
 
-<header class="text-center py-4">
-    <h1>Post 1 - My First Blog</h1>
-    <p class="text-muted">Insights and reviews from my tech journey</p>
-</header>
-
-<main class="container">
-    <!-- Post Content -->
-    <article id="post1" class="mb-5">
-        <p>Welcome to my blog! Here you can leave ratings, subscribe to my newsletter, or contact me.</p>
-        <p>Post content goes here…</p>
+  <main class="container">
+    <article class="blog-post">
+      <h1>My First Blog</h1>
+      <p>Published on Aug 15, 2025</p>
+      <p>This is the full content of my first blog post...</p>
     </article>
+  </main>
 
-    <!-- Star Ratings -->
-    <section class="mb-5">
-        <h2>Rate this post:</h2>
-        <div class="star-rating mb-2">
-            <span data-value="1">⭐</span>
-            <span data-value="2">⭐</span>
-            <span data-value="3">⭐</span>
-            <span data-value="4">⭐</span>
-            <span data-value="5">⭐</span>
-        </div>
-        <p id="rating-msg"></p>
-    </section>
-
-    <!-- Newsletter Form -->
-    <section class="mb-5">
-        <h2>Subscribe to my Newsletter</h2>
-        <form id="newsletter-form" class="mb-2">
-            <input type="text" id="name" placeholder="Your Name" required class="form-control mb-2">
-            <input type="email" id="email" placeholder="Your Email" required class="form-control mb-2">
-            <button type="submit" class="btn btn-primary">Subscribe</button>
-        </form>
-        <p id="newsletter-msg" class="text-success"></p>
-    </section>
-
-    <!-- Contact Form -->
-    <section class="mb-5">
-        <h2>Contact Me</h2>
-        <form id="contact-form" class="mb-2">
-            <input type="text" id="contact-name" placeholder="Your Name" required class="form-control mb-2">
-            <input type="email" id="contact-email" placeholder="Your Email" required class="form-control mb-2">
-            <textarea id="contact-message" placeholder="Your Message" required class="form-control mb-2"></textarea>
-            <button type="submit" class="btn btn-success">Send Message</button>
-        </form>
-        <p id="contact-msg" class="text-success"></p>
-    </section>
-
-    <!-- Comments -->
-    <section class="mb-5">
-        <h2>Comments:</h2>
-        <div id="comments">
-            <script src="https://utteranc.es/client.js"
-                repo="chriskejw/cpro-review.com"
-                issue-term="pathname"
-                theme="github-light"
-                crossorigin="anonymous"
-                async>
-            </script>
-        </div>
-    </section>
-</main>
-
-<footer class="text-center py-4 text-muted">
-    &copy; 2025 CPro Review
-</footer>
-
-<!-- JS -->
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3.2.0/dist/email.min.js"></script>
-<script src="scripts.js"></script>
+  <div id="footer-placeholder"></div>
 </body>
 </html>

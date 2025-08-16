@@ -1,23 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Post 1 - My First Blog</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Review of XYZ Gadget — CPro Reviews</title>
+
+  <meta name="description" content="Hands-on review of the XYZ gadget with pros, cons, and final verdict."/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <script src="scripts.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
+  <script src="script.js" defer></script>
 </head>
 <body>
-  <div id="header-placeholder"></div>
+  <!-- Shared header -->
+  <div id="header-include"></div>
 
-  <main class="container">
-    <article class="blog-post">
-      <h1>My First Blog</h1>
-      <p>Published on Aug 15, 2025</p>
-      <p>This is the full content of my first blog post...</p>
+  <main class="container-xxl my-5">
+    <!-- Hero -->
+    <header class="mb-4">
+      <img src="assets/images/post1.jpg" alt="XYZ Gadget on desk" class="img-fluid rounded shadow-sm mb-3" style="max-height:420px; object-fit:cover; width:100%;">
+      <h1 class="fw-bold">Review of XYZ Gadget</h1>
+      <p class="text-muted mb-1">August 15, 2025 • <span class="badge bg-danger">Reviews</span></p>
+      <p class="lead text-muted">Hands-on review of the XYZ gadget with pros, cons, and our final verdict after two weeks of daily use.</p>
+    </header>
+
+    <!-- Content -->
+    <article class="mb-5">
+      <h2 class="h4 fw-bold mb-3">TL;DR</h2>
+      <ul>
+        <li><strong>Great:</strong> Build quality, battery life, fast pairing</li>
+        <li><strong>Okay:</strong> Companion app is basic</li>
+        <li><strong>Weak:</strong> Price is high for the feature set</li>
+      </ul>
+
+      <h2 class="h4 fw-bold mt-4">Design & Build</h2>
+      <p>The XYZ feels premium: aluminum rails, textured back, and a confident click on every button. At 180g it’s balanced and easy to hold, even during extended sessions.</p>
+
+      <h2 class="h4 fw-bold mt-4">Performance</h2>
+      <p>In synthetic and real-world tests, XYZ consistently beat last year’s model by ~20%. Launching heavy apps took under two seconds, and there were no thermal throttling issues in normal use.</p>
+
+      <div class="row g-3 my-3">
+        <div class="col-md-6"><img src="assets/images/post1-detail-1.jpg" alt="XYZ ports" class="img-fluid rounded"></div>
+        <div class="col-md-6"><img src="assets/images/post1-detail-2.jpg" alt="XYZ display" class="img-fluid rounded"></div>
+      </div>
+
+      <h2 class="h4 fw-bold mt-4">Battery Life</h2>
+      <p>We averaged 8h 42m of mixed usage at 60% brightness (Wi-Fi on, Bluetooth on). A 30-minute fast charge took it from 10% to 62%.</p>
+
+      <h2 class="h4 fw-bold mt-4">Should You Buy It?</h2>
+      <p>If you value build quality and battery life over cutting-edge features, the XYZ is a solid pick. If you want the absolute most for your money, there are better values at this price.</p>
+
+      <div class="alert alert-light border mt-4">
+        <strong>Verdict:</strong> 8.2/10 — Premium feel and endurance, but watch the price.
+      </div>
     </article>
+
+    <!-- Share / CTA -->
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-5">
+      <a class="btn btn-primary" href="videos.html">Watch related videos</a>
+      <a class="btn btn-outline-primary" href="index.html">Subscribe to newsletter</a>
+    </div>
+
+    <!-- Comments -->
+    <section id="comments" aria-label="Comments"></section>
   </main>
 
-  <div id="footer-placeholder"></div>
+  <!-- Back to top -->
+  <button id="backToTop" class="btn btn-primary rounded-circle" type="button" aria-label="Back to top">↑</button>
+
+  <!-- Shared footer -->
+  <div id="footer-include"></div>
 </body>
 </html>

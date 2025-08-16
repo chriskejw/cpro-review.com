@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Bonuses — CProReview</title>
+
+  <!-- Keep this page semi-private: not indexed, but links still followed -->
+  <meta name="robots" content="noindex,follow">
+
+  <meta name="description" content="Thanks for subscribing! Grab your CProReview bonuses: starter guides, templates, and recommended tools.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div id="header-include"></div>
+
+  <main class="container-xxl my-5">
+
+    <!-- Thank-you Hero (uses the same red spotlight look) -->
+    <section class="nl-spotlight text-center">
+      <h1 class="nl-title mb-2">You're In 🎉</h1>
+      <p class="nl-sub mx-auto">
+        Thanks for joining the <span class="nl-brand">CProReview</span> newsletter.
+        Your first email is on the way—meanwhile, enjoy these subscriber-only bonuses.
+      </p>
+      <small class="d-block text-white-75 mt-2">
+        Tip: If you don’t see our email in a few minutes, check Promotions/Spam and drag it to your inbox.
+      </small>
+    </section>
+
+    <!-- Bonus Packs -->
+    <section class="my-5">
+      <div class="row g-4">
+
+        <!-- Bonus 1 -->
+        <div class="col-md-6">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="row g-0 align-items-center">
+              <div class="col-sm-5">
+                <img src="assets/images/bonus-guide.jpg" class="img-fluid rounded-start" alt="Starter Guide">
+              </div>
+              <div class="col-sm-7">
+                <div class="card-body">
+                  <h3 class="h5 fw-bold">Smart Buyer’s Starter Guide (PDF)</h3>
+                  <p class="text-muted mb-3">A concise checklist to evaluate gear fast: what matters, what doesn’t, and how to avoid overpaying.</p>
+                  <a class="btn btn-primary btn-sm" href="#" onclick="alert('Placeholder — attach your PDF at assets/files/starter-guide.pdf and link it here.'); return false;">Download PDF</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bonus 2 -->
+        <div class="col-md-6">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="row g-0 align-items-center">
+              <div class="col-sm-5">
+                <img src="assets/images/bonus-notion.jpg" class="img-fluid rounded-start" alt="Notion Template">
+              </div>
+              <div class="col-sm-7">
+                <div class="card-body">
+                  <h3 class="h5 fw-bold">Gear Tracker Template (Notion)</h3>
+                  <p class="text-muted mb-3">Track purchases, return windows, firmware updates, and notes—stay organized and save money.</p>
+                  <a class="btn btn-primary btn-sm" href="#" onclick="alert('Placeholder — link your Notion template share URL.'); return false;">Get the Template</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bonus 3 -->
+        <div class="col-md-6">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="row g-0 align-items-center">
+              <div class="col-sm-5">
+                <img src="assets/images/bonus-checklist.jpg" class="img-fluid rounded-start" alt="Optimization Checklist">
+              </div>
+              <div class="col-sm-7">
+                <div class="card-body">
+                  <h3 class="h5 fw-bold">PC Optimization Checklist</h3>
+                  <p class="text-muted mb-3">A safe, 20-minute routine to speed up your machine without breaking updates or drivers.</p>
+                  <a class="btn btn-primary btn-sm" href="#" onclick="alert('Placeholder — attach assets/files/pc-optimization-checklist.pdf and link it here.'); return false;">Download Checklist</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bonus 4 -->
+        <div class="col-md-6">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="row g-0 align-items-center">
+              <div class="col-sm-5">
+                <img src="assets/images/bonus-tools.jpg" class="img-fluid rounded-start" alt="Recommended Tools">
+              </div>
+              <div class="col-sm-7">
+                <div class="card-body">
+                  <h3 class="h5 fw-bold">Tools We Actually Use</h3>
+                  <p class="text-muted mb-3">Our evergreen picks for mice, keyboards, storage, and apps—no hype, just helpful.</p>
+                  <a class="btn btn-primary btn-sm" href="posts.html">Browse Picks</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Keep exploring -->
+    <section class="my-5">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="p-4 rounded border bg-white h-100">
+            <h4 class="h6 fw-bold mb-2">Latest Reviews</h4>
+            <p class="text-muted mb-3">See what’s worth your time and money right now.</p>
+            <a class="btn btn-outline-primary btn-sm" href="posts.html">See Posts</a>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="p-4 rounded border bg-white h-100">
+            <h4 class="h6 fw-bold mb-2">Video Deep Dives</h4>
+            <p class="text-muted mb-3">Detailed breakdowns, tests, and side-by-side comparisons.</p>
+            <a class="btn btn-outline-primary btn-sm" href="videos.html">Watch Videos</a>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="p-4 rounded border bg-white h-100">
+            <h4 class="h6 fw-bold mb-2">Join on YouTube</h4>
+            <p class="text-muted mb-3">Short tips between newsletters, plus behind-the-scenes tests.</p>
+            <a class="btn btn-youtube-nav btn-sm" href="https://www.youtube.com/@cpro-review" target="_blank" rel="noopener">
+              <span class="yt-icon" aria-hidden="true"></span><span class="yt-label">Subscribe</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Little reassurance -->
+    <section class="my-5 text-center">
+      <p class="text-muted mb-1">You can unsubscribe anytime with one click.</p>
+      <p class="text-muted">If you need help, just reply to any newsletter email—real humans here.</p>
+      <a class="btn btn-outline-primary btn-sm mt-2" href="index.html">Back to Home</a>
+    </section>
+  </main>
+
+  <button id="backToTop" class="btn btn-primary rounded-circle" type="button" aria-label="Back to top">↑</button>
+  <div id="footer-include"></div>
+</body>
+</html>

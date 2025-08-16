@@ -1,63 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Blog - Home</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CPro Reviews — Home</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js" defer></script>
-  <script src="scripts.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
+  <script src="script.js" defer></script>
 </head>
 <body>
-  <!-- Header -->
-  <div id="header-placeholder"></div>
+  <!-- Shared header -->
+  <div id="header-include"></div>
 
-  <!-- Main Content -->
-  <main class="container">
-    <!-- Intro Section -->
-    <section class="intro">
-      <h1>Welcome to My Blog</h1>
-      <p>Insights, tutorials, and stories worth sharing.</p>
+  <main class="container-xxl my-5">
+
+    <!-- Featured Carousel -->
+    <section class="featured mb-5">
+      <div id="featuredCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators" id="featured-indicators"></div>
+        <div class="carousel-inner" id="featured-inner"></div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#featuredCarousel" data-bs-slide="prev" aria-label="Previous">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#featuredCarousel" data-bs-slide="next" aria-label="Next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </button>
+      </div>
     </section>
 
-    <!-- Blog Preview Section -->
-    <section class="blog-preview">
-      <h2>Latest Posts</h2>
-      <div class="card-grid"></div>
+    <!-- Latest Videos -->
+    <section class="mb-5">
+      <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-3">
+        <h2 class="mb-2 mb-md-0">Latest Videos</h2>
+      </div>
+      <div class="row row-cols-1 row-cols-md-3 g-4" id="videoGrid">
+
+        <!-- Newest first (static) -->
+        <div class="col">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="ratio ratio-16x9">
+              <iframe src="https://www.youtube.com/embed/ysz5S6PUM-U"
+                      title="PC Optimization Tips" frameborder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowfullscreen></iframe>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">How to Optimize Your PC</h5>
+              <p class="card-text">Step-by-step guide to improving PC performance without breaking anything.</p>
+              <small class="text-muted">Published: Aug 16, 2025</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="ratio ratio-16x9">
+              <iframe src="https://www.youtube.com/embed/ScMzIvxBSi4"
+                      title="Top Accessories" frameborder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowfullscreen></iframe>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">Top 5 Tech Accessories 2025</h5>
+              <p class="card-text">We test the top accessories this year to see which ones are worth your money.</p>
+              <small class="text-muted">Published: Aug 14, 2025</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="ratio ratio-16x9">
+              <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                      title="Gadget X Review" frameborder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowfullscreen></iframe>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">Review: Gadget X</h5>
+              <p class="card-text">Our deep-dive review of Gadget X. Watch it in action with real tests and benchmarks.</p>
+              <small class="text-muted">Published: Aug 10, 2025</small>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </section>
 
-    <!-- Newsletter Section -->
-    <section id="subscribe">
-      <h2>Subscribe to Our Newsletter</h2>
-      <form id="subscribeForm">
-        <input type="text" id="name" placeholder="Your Name" required>
-        <input type="email" id="email" placeholder="Your Email" required>
-        <button type="submit">Subscribe</button>
-      </form>
-      <p id="msg"></p>
+    <!-- Latest Posts Grid -->
+    <section id="latest-posts">
+      <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-3">
+        <h2 class="mb-2 mb-md-0">Latest Posts</h2>
+      </div>
+      <div class="row row-cols-1 row-cols-md-3 g-4 card-grid"></div>
+      <p id="noResults" class="text-muted mt-2" style="display:none;">No posts match your search.</p>
     </section>
 
-    <!-- Contact Section -->
-    <section id="contact">
-      <h2>Contact Us</h2>
-      <form id="contactForm">
-        <input type="text" id="contactName" placeholder="Your Name" required>
-        <input type="email" id="contactEmail" placeholder="Your Email" required>
-        <textarea id="contactMessage" placeholder="Your Message" required></textarea>
-        <button type="submit">Send</button>
-      </form>
-      <p id="contactMsg"></p>
-    </section>
+<!-- Newsletter Hero (Index) -->
+<section class="nl-spotlight text-center my-5">
+  <h2 class="nl-title">
+    Get the <span class="nl-brand">FREE</span> CProReview Newsletter
+  </h2>
+
+  <p class="nl-sub mx-auto">
+    Honest reviews, curated recommendations, and practical tips.
+  </p>
+
+  <!-- Single pill form -->
+  <form id="newsletterFormIndex" class="nl-pill mx-auto" novalidate>
+    <div class="input-group input-group-lg">
+      <input
+        type="email"
+        name="email"
+        class="form-control nl-email"
+        placeholder="Enter your email address"
+        aria-label="Email address"
+        required />
+      <button class="btn btn-cta nl-submit" type="submit">Subscribe</button>
+    </div>
+    <p id="msgIndex" class="mt-2 small text-white-75"></p>
+    <small class="d-block mt-2 text-white-75">No fluff. Just value.</small>
+  </form>
+</section>
+
   </main>
 
-  <!-- Footer -->
-  <div id="footer-placeholder"></div>
+  <!-- Back to top -->
+  <button id="backToTop" class="btn btn-primary rounded-circle" type="button" aria-label="Back to top">↑</button>
 
-  <script>
-    // Initialize EmailJS
-    (function() {
-      emailjs.init('YOUR_EMAILJS_USER_ID');
-    })();
-  </script>
+  <!-- Shared footer -->
+  <div id="footer-include"></div>
 </body>
 </html>

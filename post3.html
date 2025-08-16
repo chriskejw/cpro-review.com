@@ -1,29 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Post 3 - Productivity Hacks</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>How to Optimize Your PC — CPro Reviews</title>
+
+  <meta name="description" content="Simple, safe steps to speed up your PC without breaking updates or drivers."/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <script src="scripts.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
+  <script src="script.js" defer></script>
 </head>
 <body>
-  <div id="header-placeholder"></div>
+  <!-- Shared header -->
+  <div id="header-include"></div>
 
-  <main class="container">
-    <article class="blog-post">
-      <h1>Productivity Hacks for Developers</h1>
-      <p>Published on Aug 17, 2025</p>
-      <p>Being productive while learning or working as a developer is crucial. Some techniques that helped me:</p>
+  <main class="container-xxl my-5">
+    <!-- Hero -->
+    <header class="mb-4">
+      <img src="assets/images/post3.jpg" alt="PC optimization steps" class="img-fluid rounded shadow-sm mb-3" style="max-height:420px; object-fit:cover; width:100%;">
+      <h1 class="fw-bold">How to Optimize Your PC</h1>
+      <p class="text-muted mb-1">August 13, 2025 • <span class="badge bg-danger">Guides</span></p>
+      <p class="lead text-muted">A safe, no-nonsense checklist to improve performance and stability in under an hour.</p>
+    </header>
+
+    <!-- Content -->
+    <article class="mb-5">
+      <h2 class="h4 fw-bold mb-2">Before You Start</h2>
       <ul>
-        <li>Pomodoro technique (25 min focused work + 5 min break)</li>
-        <li>Keeping a simple to-do list and prioritizing tasks</li>
-        <li>Using keyboard shortcuts to speed up repetitive actions</li>
+        <li>Create a restore point.</li>
+        <li>Update your GPU and chipset drivers.</li>
+        <li>Backup anything critical.</li>
       </ul>
-      <p>Small habits compound over time. Consistency is better than long sporadic bursts.</p>
+
+      <h2 class="h4 fw-bold mt-4">1) Remove Startup Clutter</h2>
+      <p>Open Task Manager → <em>Startup apps</em>. Disable anything you don’t need immediately at boot. This alone can shave 10–30s off startup time.</p>
+
+      <h2 class="h4 fw-bold mt-4">2) Storage &amp; Indexing</h2>
+      <p>Run Disk Cleanup, clear temp files, and reduce indexing scope to commonly used folders. On SSDs, keep 10–20% free space for wear leveling.</p>
+
+      <h2 class="h4 fw-bold mt-4">3) Power &amp; Performance Mode</h2>
+      <p>On laptops, use Balanced mode for battery and Performance mode when plugged in. On desktops, a High Performance plan can help sustained workloads.</p>
+
+      <div class="row g-3 my-3">
+        <div class="col-md-6"><img src="assets/images/post3-detail-1.jpg" alt="Task manager startup" class="img-fluid rounded"></div>
+        <div class="col-md-6"><img src="assets/images/post3-detail-2.jpg" alt="Windows settings" class="img-fluid rounded"></div>
+      </div>
+
+      <h2 class="h4 fw-bold mt-4">4) Optional Tweaks (Safe)</h2>
+      <ul>
+        <li>Enable hardware accelerated GPU scheduling (newer GPUs only).</li>
+        <li>Turn off animations if you prefer snappier feel.</li>
+        <li>Use a reputable uninstaller for stubborn bloat.</li>
+      </ul>
+
+      <div class="alert alert-light border mt-4">
+        <strong>Result:</strong> Faster boots, fewer background apps, and smoother multitasking — without breaking updates.
+      </div>
     </article>
+
+    <!-- CTA -->
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-5">
+      <a class="btn btn-primary" href="videos.html">Watch the video guide</a>
+      <a class="btn btn-outline-primary" href="posts.html">Browse all posts</a>
+    </div>
+
+    <!-- Comments -->
+    <section id="comments" aria-label="Comments"></section>
   </main>
 
-  <div id="footer-placeholder"></div>
+  <!-- Back to top -->
+  <button id="backToTop" class="btn btn-primary rounded-circle" type="button" aria-label="Back to top">↑</button>
+
+  <!-- Shared footer -->
+  <div id="footer-include"></div>
 </body>
 </html>

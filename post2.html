@@ -1,24 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Post 2 - Learning Web Dev</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Top 5 Tech Accessories 2025 — CPro Reviews</title>
+
+  <meta name="description" content="Five accessories that meaningfully improve daily workflow in 2025."/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <script src="scripts.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
+  <script src="script.js" defer></script>
 </head>
 <body>
-  <div id="header-placeholder"></div>
+  <!-- Shared header -->
+  <div id="header-include"></div>
 
-  <main class="container">
-    <article class="blog-post">
-      <h1>Learning Web Development: My Journey</h1>
-      <p>Published on Aug 16, 2025</p>
-      <p>Web development can be overwhelming at first, but breaking it down into HTML, CSS, and JavaScript makes it approachable. I started by building small projects and gradually moved to frameworks like React.</p>
-      <p>Consistency and practice are key. Try building one page every week and experiment with styles and interactivity.</p>
+  <main class="container-xxl my-5">
+    <!-- Hero -->
+    <header class="mb-4">
+      <img src="assets/images/post2.jpg" alt="Tech accessories on table" class="img-fluid rounded shadow-sm mb-3" style="max-height:420px; object-fit:cover; width:100%;">
+      <h1 class="fw-bold">Top 5 Tech Accessories 2025</h1>
+      <p class="text-muted mb-1">August 14, 2025 • <span class="badge bg-danger">Accessories</span></p>
+      <p class="lead text-muted">We tested dozens of accessories this year. These five deliver the biggest quality-of-life improvements for most people.</p>
+    </header>
+
+    <!-- Content -->
+    <article class="mb-5">
+      <ol class="mb-4">
+        <li class="mb-3">
+          <h2 class="h5 fw-bold mb-1">1) Compact USB-C Hub</h2>
+          <p>HDMI 2.1, 100W passthrough, and two USB-A ports in a pocketable slab. It runs cool and never dropped a connection in our tests.</p>
+        </li>
+        <li class="mb-3">
+          <h2 class="h5 fw-bold mb-1">2) Wireless Ergonomic Mouse</h2>
+          <p>Excellent sensor, silent clicks, and 3 devices paired. Battery life exceeded the manufacturer rating by 15% in our use.</p>
+        </li>
+        <li class="mb-3">
+          <h2 class="h5 fw-bold mb-1">3) Foldable Laptop Stand</h2>
+          <p>Light yet rigid. Improves typing angle and airflow; folds flat into a sleeve pocket.</p>
+        </li>
+        <li class="mb-3">
+          <h2 class="h5 fw-bold mb-1">4) Portable SSD (USB 3.2 Gen 2x2)</h2>
+          <p>Real-world transfers hit ~1.9GB/s. Includes a short, durable cable and rubber sleeve.</p>
+        </li>
+        <li class="mb-3">
+          <h2 class="h5 fw-bold mb-1">5) Magnetic Cable Clips</h2>
+          <p>Keep your desk tidy and cables accessible. Doesn’t leave residue on most surfaces.</p>
+        </li>
+      </ol>
+
+      <div class="row g-3 my-3">
+        <div class="col-md-4"><img src="assets/images/post2-detail-1.jpg" alt="USB-C hub" class="img-fluid rounded"></div>
+        <div class="col-md-4"><img src="assets/images/post2-detail-2.jpg" alt="Ergonomic mouse" class="img-fluid rounded"></div>
+        <div class="col-md-4"><img src="assets/images/post2-detail-3.jpg" alt="Laptop stand" class="img-fluid rounded"></div>
+      </div>
+
+      <h2 class="h4 fw-bold mt-4">How We Chose</h2>
+      <p>We prioritize reliability and repeatable test results over spec sheets. Each item was daily-driven for at least a week by multiple reviewers.</p>
+
+      <div class="alert alert-light border mt-4">
+        <strong>Bottom line:</strong> Start with the hub and mouse; add the SSD if you move big files. The rest depends on your setup.
+      </div>
     </article>
+
+    <!-- CTA -->
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-5">
+      <a class="btn btn-primary" href="posts.html">See all posts</a>
+      <a class="btn btn-outline-primary" href="videos.html">Watch related videos</a>
+    </div>
+
+    <!-- Comments -->
+    <section id="comments" aria-label="Comments"></section>
   </main>
 
-  <div id="footer-placeholder"></div>
+  <!-- Back to top -->
+  <button id="backToTop" class="btn btn-primary rounded-circle" type="button" aria-label="Back to top">↑</button>
+
+  <!-- Shared footer -->
+  <div id="footer-include"></div>
 </body>
 </html>

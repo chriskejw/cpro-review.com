@@ -1,11 +1,39 @@
-<header class="navbar">
-  <div class="container">
-    <a href="index.html" class="logo">My Blog</a>
-    <nav>
-      <ul class="nav-links">
-        <li><a href="index.html#subscribe">Subscribe</a></li>
-        <li><a href="index.html#contact">Contact</a></li>
-      </ul>
-    </nav>
-  </div>
+<!-- header.html -->
+<header>
+  <nav class="navbar navbar-expand-lg site-navbar">
+    <div class="container-xxl">
+      <!-- Brand -->
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <img src="assets/images/logo.png" alt="CPro Reviews Logo" width="40" height="40" class="me-2">
+        <span class="fw-bold text-light">CProReview</span>
+      </a>
+
+      <!-- Toggler -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Links -->
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav align-items-lg-center">
+          <li class="nav-item"><a class="nav-link" href="posts.html">Posts</a></li>
+          <li class="nav-item"><a class="nav-link" href="videos.html">Videos</a></li>
+          <li class="nav-item"><a class="nav-link" href="newsletter.html">Newsletter</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+          <li class="nav-item">
+            <form class="d-flex ms-lg-3" role="search">
+              <input id="searchInput" class="form-control form-control-sm" type="search" placeholder="Search..." aria-label="Search">
+            </form>
+          </li>
+          <li class="nav-item ms-lg-3">
+            <a href="https://www.youtube.com/@cpro-review" target="_blank" rel="noopener"
+              class="btn btn-youtube-nav" aria-label="Subscribe on YouTube">
+              <span class="yt-icon" aria-hidden="true"></span>
+              <span class="yt-label">Subscribe</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 </header>

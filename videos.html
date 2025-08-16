@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>All Videos — CPro Reviews</title>
+
+  <!-- Bootstrap & site styles -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <!-- Shared header include (loads header.html) -->
+  <div id="header-include"></div>
+
+  <main class="container-xxl my-5">
+    <section>
+      <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-3">
+        <h2 class="mb-2 mb-md-0">All Videos</h2>
+
+        <!-- Category Filter -->
+        <div class="d-flex align-items-center gap-2 ms-md-3">
+          <label for="videoCategoryFilter" class="text-muted small mb-0">Category</label>
+          <select id="videoCategoryFilter" class="form-select form-select-sm" style="min-width: 180px;">
+            <option value="all">All categories</option>
+            <!-- options populated by script.js -->
+          </select>
+        </div>
+      </div>
+
+      <!-- Videos grid (thumbnails; modal player on click) -->
+      <div class="row row-cols-1 row-cols-md-3 g-4" id="videosGrid"></div>
+      <p id="noVideoResults" class="text-muted mt-2" style="display:none;">No videos found.</p>
+
+      <!-- Pagination -->
+      <nav class="mt-4">
+        <ul class="pagination justify-content-center" id="videosPagination"></ul>
+      </nav>
+    </section>
+  </main>
+
+  <!-- Modal player (single instance reused) -->
+  <div class="modal fade" id="videoPlayerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content bg-dark">
+        <div class="modal-body p-0 ratio ratio-16x9">
+          <iframe id="videoPlayerFrame" src="" title="Video player"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen></iframe>
+        </div>
+        <div class="modal-footer justify-content-between py-2 px-3">
+          <span class="text-white-50 small" id="videoPlayerTitle"></span>
+          <button type="button" class="btn btn-outline-primary btn-sm" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Back to top -->
+  <button id="backToTop" class="btn btn-primary rounded-circle" type="button" aria-label="Back to top">↑</button>
+
+  <!-- Shared footer include (loads footer.html) -->
+  <div id="footer-include"></div>
+</body>
+</html>

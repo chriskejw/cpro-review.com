@@ -3,12 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Review of XYZ Gadget — CPro Reviews</title>
+  <title>Review of XYZ Gadget — CProReview</title>
 
   <meta name="description" content="Hands-on review of the XYZ gadget with pros, cons, and final verdict."/>
+
+  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome (for footer social icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Site styles -->
   <link rel="stylesheet" href="style.css">
 
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
   <script src="script.js" defer></script>
@@ -22,12 +30,18 @@
     <header class="mb-4">
       <img src="assets/images/post1.jpg" alt="XYZ Gadget on desk" class="img-fluid rounded shadow-sm mb-3" style="max-height:420px; object-fit:cover; width:100%;">
       <h1 class="fw-bold">Review of XYZ Gadget</h1>
-      <p class="text-muted mb-1">August 15, 2025 • <span class="badge bg-danger">Reviews</span></p>
+      <p class="text-muted mb-1 d-flex flex-wrap align-items-center gap-2">
+        <time id="publishedTime" class="me-1" data-published="August 15, 2025" datetime="2025-08-15 00:00">
+          August 15, 2025
+        </time>
+        <span class="badge rounded-pill bg-danger category-pill">Reviews</span>
+        <span id="publishedAgo" class="ms-1"></span>
+      </p>
       <p class="lead text-muted">Hands-on review of the XYZ gadget with pros, cons, and our final verdict after two weeks of daily use.</p>
     </header>
 
     <!-- Content -->
-    <article class="mb-5">
+    <article class="mb-5 post-content">
       <h2 class="h4 fw-bold mb-3">TL;DR</h2>
       <ul>
         <li><strong>Great:</strong> Build quality, battery life, fast pairing</li>

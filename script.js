@@ -8,20 +8,42 @@ const EMAILJS_TEMPLATE_ID    = "template_wxvjwg9";
 const UTTERANCES_REPO        = "chriskejw/cpro-review.com";
 
 const POSTS_PER_PAGE  = 9;
-const VIDEOS_PER_PAGE = 6;
+const VIDEOS_PER_PAGE = 9;
+
+// HOME LIMITS (homepage shows newest 6 each)
+const HOME_POSTS_LIMIT  = 6;
+const HOME_VIDEOS_LIMIT = 6;
 
 // State
 let ALL_CARDS = [];  // posts
 let ALL_VIDS  = [];  // videos
 
-let POSTS_STATE = { page: 1, category: "all", query: "", categories: [] };
-let VIDEOS_STATE = { page: 1, category: "all", query: "", categories: [] };
+let POSTS_STATE  = { page: 1, category: "all",  query: "", categories: [] };
+let VIDEOS_STATE = { page: 1, category: "all",  query: "", categories: [] };
 
 // =========================
-// BOOT
+/* BOOT */
 // =========================
 document.addEventListener("DOMContentLoaded", async () => {
+  // lock to light (clear old theme setting if any)
+  document.documentElement.removeAttribute("data-theme");
+  try { localStorage.removeItem("theme"); } catch {}
+
   await loadIncludes();
+
+  // Enable search only on these pages
+  const allowedSearchPages = ["index.html", "posts.html", "videos.html"];
+  const path = window.location.pathname;
+  const page = path.substring(path.lastIndexOf("/") + 1) || "index.html";
+  if (allowedSearchPages.includes(page)) {
+    document.body.classList.add("search-enabled");
+  }
+
+  // Run search-related features ONLY when search is enabled
+  if (document.body.classList.contains("search-enabled")) {
+    enhanceSearchClear();         // universal clear (❌)
+    wireGlobalSearchNavigation(); // Enter-to-search -> posts.html?q=
+  }
 
   // Footer year
   const y = document.getElementById("year");
@@ -29,11 +51,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Third-party init
   if (window.emailjs && EMAILJS_PUBLIC_KEY) emailjs.init(EMAILJS_PUBLIC_KEY);
-
-  initTheme();
-  initThemeToggle();
-  wireThemeToggle();
-  wireGlobalSearchNavigation();
 
   initHome();
   initPostsPage();
@@ -45,10 +62,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   setActiveNav();
   enableSmoothScroll();
+
+  // pause on hover/tap & resume later for the featured carousel
+  enableCarouselTapPause();
+
+  // update post detail meta (time-ago on post pages)
+  initPostDetailMeta();
 });
 
 // =========================
-// INCLUDES
+/* INCLUDES */
 // =========================
 async function loadIncludes() {
   const include = async (id, file) => {
@@ -62,49 +85,6 @@ async function loadIncludes() {
   };
   await include("header-include", "header.html");
   await include("footer-include", "footer.html");
-}
-
-// =========================
-/* THEME */
-// =========================
-function initTheme() {
-  const saved = localStorage.getItem("theme");
-  if (saved) document.documentElement.setAttribute("data-theme", saved);
-}
-
-function initThemeToggle() {
-  const btn = document.getElementById("themeToggle");
-  if (!btn) return;
-
-  // restore saved theme
-  if (localStorage.getItem("theme")) {
-    document.documentElement.setAttribute("data-theme", localStorage.getItem("theme"));
-  }
-
-  btn.addEventListener("click", () => {
-    const current = document.documentElement.getAttribute("data-theme");
-    const newTheme = current === "dark" ? "light" : "dark";
-    document.documentElement.setAttribute("data-theme", newTheme);
-    localStorage.setItem("theme", newTheme);
-    btn.textContent = newTheme === "dark" ? "☀️" : "🌙";
-  });
-}
-
-function wireThemeToggle() {
-  const btn = document.getElementById("themeToggle");
-  if (!btn) return;
-  const setIcon = () => {
-    const cur = document.documentElement.getAttribute("data-theme");
-    btn.textContent = cur === "dark" ? "🌞" : "🌙";
-  };
-  setIcon();
-  btn.addEventListener("click", () => {
-    const cur = document.documentElement.getAttribute("data-theme");
-    const next = cur === "dark" ? "light" : "dark";
-    document.documentElement.setAttribute("data-theme", next);
-    localStorage.setItem("theme", next);
-    setIcon();
-  });
 }
 
 // =========================
@@ -122,6 +102,7 @@ function setQueryParam(name, value, targetUrl = null) {
 }
 
 // Navbar search → posts.html?q=
+// (compact on desktop, full-width in mobile collapse; no icon-only mode)
 function wireGlobalSearchNavigation() {
   const input = document.getElementById("searchInput");
   if (!input) return;
@@ -148,74 +129,162 @@ function sortByNewest(arr, dateKey = "date") {
   return arr;
 }
 
+/**
+ * Time-ago with explicit ranges:
+ * minutes (1–59), hours (1–23), days (1–13), weeks (2–3), months (1–11), years (1–99)
+ */
+function timeAgoLimited(dateStr) {
+  const d = parseDateSafe(dateStr);
+  if (!(d instanceof Date) || isNaN(d.getTime())) return dateStr || "";
+
+  const now = new Date();
+  let diffMs = now - d;
+  if (diffMs < 0) diffMs = 0; // future-proof
+
+  const M = 60 * 1000;       // minute
+  const H = 60 * M;          // hour
+  const D = 24 * H;          // day
+
+  // Minutes (1–59)
+  const minutes = Math.floor(diffMs / M);
+  if (minutes < 60) {
+    const m = Math.max(1, minutes); // clamp 1..59
+    return `${m} minute${m === 1 ? "" : "s"} ago`;
+  }
+
+  // Hours (1–23)
+  const hours = Math.floor(diffMs / H);
+  if (hours < 24) {
+    const h = Math.max(1, hours); // clamp 1..23
+    return `${h} hour${h === 1 ? "" : "s"} ago`;
+  }
+
+  // Days (1–13)
+  const days = Math.floor(diffMs / D);
+  if (days <= 13) {
+    const dNum = Math.max(1, days);
+    return `${dNum} day${dNum === 1 ? "" : "s"} ago`;
+  }
+
+  // Weeks (2–3) for 14–27 days
+  if (days < 28) {
+    const w = Math.max(2, Math.min(3, Math.floor(days / 7)));
+    return `${w} week${w === 1 ? "" : "s"} ago`;
+  }
+
+  // Months (1–11) — approx by 30-day months for < 1 year
+  if (days < 365) {
+    let m = Math.floor(days / 30);
+    m = Math.max(1, Math.min(11, m));
+    return `${m} month${m === 1 ? "" : "s"} ago`;
+  }
+
+  // Years (1–99)
+  let y = Math.floor(days / 365);
+  y = Math.max(1, Math.min(99, y));
+  return `${y} year${y === 1 ? "" : "s"} ago`;
+}
+
 // =========================
 /* HOME */
 // =========================
 function initHome() {
-  const cardGrid     = document.querySelector(".card-grid");
-  const indicatorsEl = document.getElementById("featured-indicators");
-  const innerEl      = document.getElementById("featured-inner");
-  const noResults    = document.getElementById("noResults");
-  const searchInput  = document.getElementById("searchInput");
+  const postGrid        = document.querySelector(".card-grid");
+  const postIndicators  = document.getElementById("featured-indicators");
+  const postInner       = document.getElementById("featured-inner");
 
-  if (!cardGrid || !indicatorsEl || !innerEl) return;
+  const noResults       = document.getElementById("noResults");
+  const searchInput     = document.getElementById("searchInput");
 
-  fetch("cards.json", { cache: "no-cache" })
-    .then(r => r.json())
-    .then(cards => {
-      sortByNewest(cards);
-      ALL_CARDS = cards;
+  // Build Featured Posts carousel & Latest Posts grid
+  if (postIndicators && postInner) {
+    fetch("posts.json", { cache: "no-cache" })
+      .then(r => r.json())
+      .then(cards => {
+        sortByNewest(cards);
+        ALL_CARDS = cards;
 
-      const featured = cards.filter(c => c.featured);
-      const slides = (featured.length >= 3 ? featured : cards).slice(0, 3);
+        const featured = cards.filter(c => c.featured);
+        const slides = (featured.length >= 3 ? featured : cards).slice(0, 3);
 
-      indicatorsEl.innerHTML = "";
-      innerEl.innerHTML = "";
+        postIndicators.innerHTML = "";
+        postInner.innerHTML = "";
 
-      slides.forEach((c, i) => {
-        const active = i === 0 ? "active" : "";
-        const li = document.createElement("button");
-        li.type = "button";
-        li.setAttribute("data-bs-target", "#featuredCarousel");
-        li.setAttribute("data-bs-slide-to", String(i));
-        li.className = active;
-        li.setAttribute("aria-label", `Slide ${i + 1}`);
-        if (i === 0) li.setAttribute("aria-current", "true");
-        indicatorsEl.appendChild(li);
+        slides.forEach((c, i) => {
+          const active = i === 0 ? "active" : "";
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.setAttribute("data-bs-target", "#featuredCarousel");
+          btn.setAttribute("data-bs-slide-to", String(i));
+          btn.className = active;
+          btn.setAttribute("aria-label", `Slide ${i + 1}`);
+          if (i === 0) btn.setAttribute("aria-current", "true");
+          postIndicators.appendChild(btn);
 
-        const item = document.createElement("div");
-        item.className = `carousel-item ${active}`;
-        item.innerHTML = `
-          <img src="${c.image || 'assets/images/post1.jpg'}" class="d-block w-100 featured-img" alt="${escapeHtml(c.title)}">
-          <div class="carousel-caption text-start">
-            <h2 class="fw-bold text-white">${escapeHtml(c.title)}</h2>
-            <p class="lead d-none d-md-block">${escapeHtml(c.description || "")}</p>
-            <a class="btn btn-primary btn-lg mt-2" href="${c.link}">Read More →</a>
-          </div>
-        `;
-        innerEl.appendChild(item);
-      });
+          const item = document.createElement("div");
+          item.className = `carousel-item ${active}`;
+          item.innerHTML = `
+            <img src="${c.image || 'assets/images/post1.jpg'}" class="d-block w-100 featured-img" alt="${escapeHtml(c.title)}">
+            <div class="carousel-caption text-start">
+              <h2 class="fw-bold text-white">${escapeHtml(c.title)}</h2>
+              <p class="lead caption-text">${escapeHtml(c.description || "")}</p>
+              <a class="btn btn-outline-primary btn-sm card-cta" href="${c.link}">Read More →</a>
+            </div>
+          `;
+          postInner.appendChild(item);
+        });
 
-      renderPostCards(cards, cardGrid);
+        // Latest posts grid on home — limit to 6
+        if (postGrid) {
+          renderPostCards(cards.slice(0, HOME_POSTS_LIMIT), postGrid);
 
-      if (searchInput) {
-        const doFilter = () => {
-          const q = (searchInput.value || "").toLowerCase().trim();
-          const filtered = q
-            ? ALL_CARDS.filter(c =>
-                (c.title && c.title.toLowerCase().includes(q)) ||
-                (c.description && c.description.toLowerCase().includes(q))
-              )
-            : ALL_CARDS.slice();
-          renderPostCards(filtered, cardGrid);
-          if (noResults) noResults.style.display = filtered.length ? "none" : "block";
-        };
-        searchInput.addEventListener("input", doFilter, { passive: true });
-      }
+          if (searchInput) {
+            const doFilter = () => {
+              const q = (searchInput.value || "").toLowerCase().trim();
+              const filtered = q
+                ? ALL_CARDS.filter(c =>
+                    (c.title && c.title.toLowerCase().includes(q)) ||
+                    (c.description && c.description.toLowerCase().includes(q))
+                  ).slice(0, HOME_POSTS_LIMIT)
+                : ALL_CARDS.slice(0, HOME_POSTS_LIMIT);
+              renderPostCards(filtered, postGrid);
+              if (noResults) noResults.style.display = filtered.length ? "none" : "block";
+            };
+            searchInput.addEventListener("input", doFilter, { passive: true });
+          }
+        }
 
-      initReveal();
-    })
-    .catch(err => console.error("cards.json error:", err));
+        initReveal();
+      })
+      .catch(err => console.error("posts.json error:", err));
+  }
+
+  // Latest Videos grid on home — limit to 6
+  const homeVideoGrid = document.getElementById("videoGrid");
+  const noVideoResults = document.getElementById("noVideoResults");
+
+  if (homeVideoGrid) {
+    fetch("videos.json", { cache: "no-cache" })
+      .then(r => r.json())
+      .then(videos => {
+        sortByNewest(videos);
+        ALL_VIDS = videos;
+
+        // show newest 6 on home
+        const items = videos.slice(0, HOME_VIDEOS_LIMIT);
+
+        if (!items.length) {
+          if (noVideoResults) noVideoResults.style.display = "block";
+        } else {
+          if (noVideoResults) noVideoResults.style.display = "none";
+          renderVideoCards(items, homeVideoGrid);
+        }
+
+        setupVideoModal();
+        initReveal();
+      })
+      .catch(err => console.error("videos.json error:", err));
+  }
 }
 
 // =========================
@@ -232,7 +301,7 @@ function initPostsPage() {
   const seedQ = getQueryParam("q");
   if (seedQ && searchInput) searchInput.value = seedQ;
 
-  fetch("cards.json", { cache: "no-cache" })
+  fetch("posts.json", { cache: "no-cache" })
     .then(r => r.json())
     .then(cards => {
       sortByNewest(cards);
@@ -266,7 +335,7 @@ function initPostsPage() {
 
       applyAndRender();
     })
-    .catch(err => console.error("cards.json error:", err));
+    .catch(err => console.error("posts.json error:", err));
 }
 
 function renderPostsPage(grid, pager, items, noResults) {
@@ -284,6 +353,8 @@ function renderPostsPage(grid, pager, items, noResults) {
   } else {
     if (noResults) noResults.style.display = "none";
     renderPostCards(pageItems, grid);
+    // ensure reveal items become visible after dynamic render
+    initReveal();
   }
 
   renderPagination(pager, current, pages, (p) => {
@@ -345,28 +416,6 @@ function initVideosPage() {
     .catch(err => console.error("videos.json error:", err));
 }
 
-// =========================
-/* RENDER HELPERS */
-// =========================
-function renderPostCards(items, container) {
-  container.innerHTML = "";
-  items.forEach(card => {
-    const col = document.createElement("div");
-    col.className = "col reveal";
-    col.innerHTML = `
-      <div class="card h-100 shadow-sm border-0">
-        <img src="${card.image || 'assets/images/post1.jpg'}" class="card-img-top" alt="${escapeHtml(card.title)}">
-        <div class="card-body">
-          <h5 class="card-title"><a href="${card.link}" class="text-decoration-none">${escapeHtml(card.title)}</a></h5>
-          <h6 class="card-subtitle mb-2 text-muted">${escapeHtml(card.date || "")}${card.category ? ` • ${escapeHtml(card.category)}` : ""}</h6>
-          <p class="card-text">${escapeHtml(card.description || "")}</p>
-          <a href="${card.link}" class="btn btn-outline-primary btn-sm">Read More →</a>
-        </div>
-      </div>`;
-    container.appendChild(col);
-  });
-}
-
 function renderVideosPage(grid, pager, items, noResults) {
   const total = items.length;
   const pages = Math.max(1, Math.ceil(total / VIDEOS_PER_PAGE));
@@ -382,6 +431,8 @@ function renderVideosPage(grid, pager, items, noResults) {
   } else {
     if (noResults) noResults.style.display = "none";
     renderVideoCards(pageItems, grid);
+    // ensure reveal items become visible after dynamic render
+    initReveal();
   }
 
   renderPagination(pager, current, pages, (p) => {
@@ -391,22 +442,75 @@ function renderVideosPage(grid, pager, items, noResults) {
   });
 }
 
+// =========================
+/* RENDER HELPERS (with category pill + time-ago) */
+// =========================
+function renderPostCards(items, container) {
+  container.innerHTML = "";
+  items.forEach(card => {
+    const col = document.createElement("div");
+    col.className = "col reveal";
+
+    const categoryPill = card.category
+      ? `<span class="badge rounded-pill bg-danger category-pill">${escapeHtml(card.category)}</span>`
+      : "";
+
+    const ago = timeAgoLimited(card.date);
+
+    col.innerHTML = `
+      <div class="card h-100 shadow-sm border-0 clickable-card">
+        <img src="${card.image || 'assets/images/post1.jpg'}" class="card-img-top" alt="${escapeHtml(card.title)}">
+        <div class="card-body">
+          <h5 class="card-title">${escapeHtml(card.title)}</h5>
+          <h6 class="card-subtitle mb-2 text-muted d-flex align-items-center gap-2">
+            <span title="${escapeHtml(card.date || '')}">${escapeHtml(ago)}</span>
+            ${categoryPill}
+          </h6>
+          <p class="card-text" title="${escapeHtml(card.description || '')}">
+            ${escapeHtml(card.description || "")}
+          </p>
+
+          <!-- Full-card link -->
+          <a href="${card.link}" class="stretched-link" aria-label="Open post: ${escapeHtml(card.title)}"></a>
+
+          <!-- CTA pinned bottom (CSS .card-cta) -->
+          <a href="${card.link}" class="btn btn-outline-primary btn-sm card-cta">Read More →</a>
+        </div>
+      </div>`;
+    container.appendChild(col);
+  });
+}
+
 function renderVideoCards(items, container) {
   container.innerHTML = "";
   items.forEach(v => {
     const id = getYouTubeId(v.embed);
     const thumb = v.thumbnail && v.thumbnail.trim() ? v.thumbnail : youTubeThumb(id, "hqdefault");
+
+    const categoryPill = v.category
+      ? `<span class="badge rounded-pill bg-danger category-pill">${escapeHtml(v.category)}</span>`
+      : "";
+
+    const ago = timeAgoLimited(v.date);
+
     const col = document.createElement("div");
     col.className = "col reveal";
     col.innerHTML = `
-      <div class="card h-100 shadow-sm border-0 video-card" data-video-id="${id}" data-video-title="${escapeHtml(v.title)}">
+      <div class="card h-100 shadow-sm border-0 video-card"
+           data-video-id="${id}"
+           data-video-title="${escapeHtml(v.title)}"
+           role="button" tabindex="0"
+           aria-label="Play video: ${escapeHtml(v.title)}">
         <div class="thumb-wrap">
           <img src="${thumb}" alt="${escapeHtml(v.title)}" class="card-img-top" loading="lazy">
-          <button type="button" class="play-btn btn btn-primary rounded-circle" aria-label="Play video">▶</button>
+          <button type="button" class="play-btn btn btn-primary rounded-circle" aria-hidden="true">▶</button>
         </div>
         <div class="card-body">
           <h5 class="card-title">${escapeHtml(v.title)}</h5>
-          <h6 class="card-subtitle mb-2 text-muted">${escapeHtml(v.date || "")}${v.category ? ` • ${escapeHtml(v.category)}` : ""}</h6>
+          <h6 class="card-subtitle mb-2 text-muted d-flex align-items-center gap-2">
+            <span title="${escapeHtml(v.date || '')}">${escapeHtml(ago)}</span>
+            ${categoryPill}
+          </h6>
           <p class="card-text">${escapeHtml(v.description || "")}</p>
         </div>
       </div>`;
@@ -414,30 +518,78 @@ function renderVideoCards(items, container) {
   });
 }
 
+// Reusable modal hookup for home (#videoGrid) and videos page (#videosGrid)
 function setupVideoModal() {
-  const grid = document.getElementById("videosGrid");
+  const grids = ["videosGrid", "videoGrid"]
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+
   const modalEl = document.getElementById("videoPlayerModal");
-  const frame = document.getElementById("videoPlayerFrame");
+  const frame   = document.getElementById("videoPlayerFrame");
   const titleEl = document.getElementById("videoPlayerTitle");
-  if (!grid || !modalEl || !frame) return;
+  if (!grids.length || !modalEl || !frame) return;
 
-  grid.addEventListener("click", (e) => {
-    const card = e.target.closest("[data-video-id]");
-    if (!card) return;
-
-    const id = card.getAttribute("data-video-id");
+  const openFromCard = (card) => {
+    const id    = card.getAttribute("data-video-id");
     const title = card.getAttribute("data-video-title") || "Video";
+    if (!id) return;
     frame.src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
     if (titleEl) titleEl.textContent = title;
+    bootstrap.Modal.getOrCreateInstance(modalEl).show();
+  };
 
-    const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-    modal.show();
+  grids.forEach(grid => {
+    grid.addEventListener("click", (e) => {
+      const card = e.target.closest("[data-video-id]");
+      if (card) openFromCard(card);
+    });
+    grid.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      const card = e.target.closest("[data-video-id]");
+      if (card) {
+        e.preventDefault();
+        openFromCard(card);
+      }
+    });
   });
 
   modalEl.addEventListener("hidden.bs.modal", () => {
     frame.src = "";
     if (titleEl) titleEl.textContent = "";
   });
+}
+
+// Pause on hover/tap and resume later for the Featured Posts carousel
+function enableCarouselTapPause() {
+  const el = document.getElementById("featuredCarousel");
+  if (!el || typeof bootstrap === "undefined") return;
+
+  const carousel = bootstrap.Carousel.getOrCreateInstance(el, {
+    interval: 6000,
+    pause: "hover"
+  });
+
+  let resumeTimer = null;
+  const RESUME_DELAY_MS = 8000;
+
+  const pause = () => {
+    clearTimeout(resumeTimer);
+    try { carousel.pause(); } catch {}
+  };
+  const scheduleResume = () => {
+    clearTimeout(resumeTimer);
+    resumeTimer = setTimeout(() => {
+      try { carousel.cycle(); } catch {}
+    }, RESUME_DELAY_MS);
+  };
+
+  // mobile tap = pause; resume after delay
+  el.addEventListener("touchstart", pause, { passive: true });
+  el.addEventListener("touchend", scheduleResume, { passive: true });
+
+  // keyboard focus also pauses; resume when focus leaves
+  el.addEventListener("focusin", pause);
+  el.addEventListener("focusout", scheduleResume);
 }
 
 // =========================
@@ -505,8 +657,18 @@ function escapeHtml(str) {
 }
 function getYouTubeId(url) {
   if (!url) return "";
-  const m = url.match(/(?:youtube\.com.*(?:\\?|&)v=|youtu\.be\/)([^&#]+)/);
-  return m ? m[1] : url;
+  const patterns = [
+    /youtu\.be\/([^?&#/]+)/i,
+    /youtube\.com\/watch\?[^#]*v=([^?&#/]+)/i,
+    /youtube\.com\/embed\/([^?&#/]+)/i,
+    /youtube\.com\/shorts\/([^?&#/]+)/i
+  ];
+  for (const p of patterns) {
+    const m = url.match(p);
+    if (m) return m[1];
+  }
+  if (/^[\w-]{11}$/.test(url)) return url;
+  return "";
 }
 function youTubeThumb(id, quality="hqdefault") {
   return id ? `https://img.youtube.com/vi/${id}/${quality}.jpg` : "assets/images/video-thumb.jpg";
@@ -560,29 +722,48 @@ function enableSmoothScroll() {
 /* FORMS */
 // =========================
 function initNewsletter() {
+  // (home hero)
+  const formIndex = document.getElementById("newsletterFormIndex");
+  const send = async (name, email, msgEl) => {
+    await fetch(GOOGLE_APPS_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}`
+    });
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { name, email });
+    if (msgEl) {
+      msgEl.className = "mt-2 text-white-75";
+      msgEl.textContent = "You're in! 🎉 Check your inbox for a confirmation.";
+    }
+  };
+
+  if (formIndex) {
+    formIndex.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name  = "";
+      const email = formIndex.querySelector("[name='email']")?.value?.trim() || "";
+      if (!email) return alert("Please enter an email");
+      try {
+        await send(name, email, document.getElementById("msgIndex"));
+        formIndex.reset();
+      } catch (err) {
+        console.error("Newsletter error:", err);
+        alert("Subscription failed.");
+      }
+    });
+  }
+
+  // (newsletter.html page)
   const form = document.getElementById("newsletterForm");
   if (!form) return;
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const name  = form.querySelector("[name='name']").value.trim();
-    const email = form.querySelector("[name='email']").value.trim();
+    const name  = form.querySelector("[name='name']")?.value?.trim() || "";
+    const email = form.querySelector("[name='email']")?.value?.trim() || "";
     if (!email) return alert("Please enter an email");
-
     try {
-      await fetch(GOOGLE_APPS_SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}`
-      });
-
-      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { name, email });
-      // After successful submission
-      if (msgEl) {
-        msgEl.className = "mt-2 text-white-75";
-        msgEl.textContent = "You're in! 🎉 Check your inbox for a confirmation.";
-      }
-
+      await send(name, email, document.getElementById("msg"));
       form.reset();
     } catch (err) {
       console.error("Newsletter error:", err);
@@ -603,3 +784,67 @@ function initComments() {
   script.setAttribute("theme", "github-light");
   container.appendChild(script);
 }
+
+/* =========================
+   Universal Search Clear (❌)
+   ========================= */
+function enhanceSearchClear() {
+  const inputs = Array.from(document.querySelectorAll('input[type="search"]'));
+
+  inputs.forEach((input) => {
+    if (input.dataset.clearEnhanced === "1") return; // idempotent
+    input.dataset.clearEnhanced = "1";
+
+    // Wrap the input so we can absolutely-position the clear button
+    const wrapper = document.createElement("div");
+    wrapper.className = "search-wrapper";
+    input.parentNode.insertBefore(wrapper, input);
+    wrapper.appendChild(input);
+
+    // Create the clear button
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "search-clear";
+    btn.setAttribute("aria-label", "Clear search");
+    btn.innerHTML = "&times;"; // × glyph
+    wrapper.appendChild(btn);
+
+    const toggle = () => {
+      btn.style.display = input.value ? "inline-flex" : "none";
+    };
+    toggle();
+
+    input.addEventListener("input", toggle, { passive: true });
+
+    btn.addEventListener("click", () => {
+      input.value = "";
+      input.dispatchEvent(new Event("input"));
+      input.focus();
+      toggle();
+    });
+
+    // Keyboard support on the button
+    btn.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        btn.click();
+      }
+    });
+  });
+}
+
+/* =========================
+   Post Details
+   ========================= */
+function initPostDetailMeta() {
+  const t = document.getElementById("publishedTime");
+  const agoEl = document.getElementById("publishedAgo");
+  if (!t || !agoEl || typeof timeAgoLimited !== "function") return;
+
+  const raw = t.getAttribute("data-published") || t.textContent || "";
+  const ago = timeAgoLimited(raw);
+  // agoEl.textContent = `• ${ago}`;
+  agoEl.textContent = `${ago}`;
+  agoEl.title = raw;
+}
+

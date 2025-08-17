@@ -3,19 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>All Posts — CPro Reviews</title>
+  <title>All Posts — CProReview</title>
 
-  <!-- Bootstrap & site styles -->
+  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome (for footer social icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Site styles -->
   <link rel="stylesheet" href="style.css">
 
-  <!-- Scripts -->
+  <!-- Scripts (defer) -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
   <script src="script.js" defer></script>
 </head>
 <body>
-  <!-- Shared header include (loads header.html) -->
+  <!-- Shared header include (loads header.html via script.js) -->
   <div id="header-include"></div>
 
   <main class="container-xxl my-5">
@@ -33,12 +38,12 @@
         </div>
       </div>
 
-      <!-- Cards grid -->
+      <!-- Cards grid (populated by script.js from posts.json) -->
       <div class="row row-cols-1 row-cols-md-3 g-4 card-grid" id="postsGrid"></div>
       <p id="noResults" class="text-muted mt-2" style="display:none;">No posts found.</p>
 
-      <!-- Pagination -->
-      <nav class="mt-4">
+      <!-- Pagination (populated by script.js) -->
+      <nav class="mt-4" aria-label="Posts pagination">
         <ul class="pagination justify-content-center" id="postsPagination"></ul>
       </nav>
     </section>
@@ -47,7 +52,7 @@
   <!-- Back to top -->
   <button id="backToTop" class="btn btn-primary rounded-circle" type="button" aria-label="Back to top">↑</button>
 
-  <!-- Shared footer include (loads footer.html) -->
+  <!-- Shared footer include (loads footer.html via script.js) -->
   <div id="footer-include"></div>
 </body>
 </html>

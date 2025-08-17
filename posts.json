@@ -1,0 +1,56 @@
+[
+  {
+    "title": "Review of XYZ Gadget",
+    "date": "2025-08-17 14:30",
+    "description": "Hands-on review of the XYZ gadget with pros, cons, and verdict.",
+    "link": "post1.html",
+    "image": "assets/images/post1.jpg",
+    "featured": true,
+    "category": "Reviews"
+  },
+  {
+    "title": "Top 5 Tech Accessories",
+    "date": "August 14, 2025",
+    "description": "Five accessories that meaningfully improve your daily workflow.",
+    "link": "post2.html",
+    "image": "assets/images/post2.jpg",
+    "featured": true,
+    "category": "Accessories"
+  },
+  {
+    "title": "How to Optimize Your PC",
+    "date": "August 13, 2025",
+    "description": "Simple steps to speed up your PC safely without breaking anything.",
+    "link": "post3.html",
+    "image": "assets/images/post3.jpg",
+    "featured": true,
+    "category": "Guides"
+  },
+  {
+    "title": "How to Optimize Your Tablet",
+    "date": "August 10, 2025",
+    "description": "Simple steps to speed up your tablet safely without breaking anything.",
+    "link": "post4.html",
+    "image": "assets/images/post4.jpg",
+    "featured": false,
+    "category": "Guides"
+  },
+  {
+    "title": "Top 3 iPhone Accessories",
+    "date": "August 7, 2025",
+    "description": "Three accessories that meaningfully improve your iPhone experience.",
+    "link": "post5.html",
+    "image": "assets/images/post5.jpg",
+    "featured": false,
+    "category": "Accessories"
+  },
+  {
+    "title": "Review of Baseus MC10 Earbud",
+    "date": "July 20, 2025",
+    "description": "Hands-on review of the Baseus MC10 Earbud with pros, cons, and verdict.",
+    "link": "post6.html",
+    "image": "assets/images/post6.jpg",
+    "featured": false,
+    "category": "Reviews"
+  }
+]

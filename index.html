@@ -3,22 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CPro Reviews — Home</title>
+  <title>Your Product Reviewer - CProReview</title>
 
+  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome (for footer social icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Site styles -->
   <link rel="stylesheet" href="style.css">
 
+  <!-- Scripts (defer) -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
   <script src="script.js" defer></script>
 </head>
 <body>
-  <!-- Shared header -->
+  <!-- Shared header include (loads header.html via script.js) -->
   <div id="header-include"></div>
 
   <main class="container-xxl my-5">
 
-    <!-- Featured Carousel -->
+    <!-- Featured Posts Carousel -->
     <section class="featured mb-5">
       <div id="featuredCarousel" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-indicators" id="featured-indicators"></div>
@@ -37,103 +44,76 @@
     <section class="mb-5">
       <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-3">
         <h2 class="mb-2 mb-md-0">Latest Videos</h2>
+        <!-- Added: View All Videos button (keeps alignment; adds top margin on mobile) -->
+        <a href="videos.html" class="btn btn-outline-primary btn-sm mt-2 mt-md-0">View All Videos</a>
       </div>
-      <div class="row row-cols-1 row-cols-md-3 g-4" id="videoGrid">
 
-        <!-- Newest first (static) -->
-        <div class="col">
-          <div class="card h-100 shadow-sm border-0">
-            <div class="ratio ratio-16x9">
-              <iframe src="https://www.youtube.com/embed/ysz5S6PUM-U"
-                      title="PC Optimization Tips" frameborder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowfullscreen></iframe>
-            </div>
-            <div class="card-body">
-              <h5 class="card-title">How to Optimize Your PC</h5>
-              <p class="card-text">Step-by-step guide to improving PC performance without breaking anything.</p>
-              <small class="text-muted">Published: Aug 16, 2025</small>
-            </div>
-          </div>
-        </div>
-
-        <div class="col">
-          <div class="card h-100 shadow-sm border-0">
-            <div class="ratio ratio-16x9">
-              <iframe src="https://www.youtube.com/embed/ScMzIvxBSi4"
-                      title="Top Accessories" frameborder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowfullscreen></iframe>
-            </div>
-            <div class="card-body">
-              <h5 class="card-title">Top 5 Tech Accessories 2025</h5>
-              <p class="card-text">We test the top accessories this year to see which ones are worth your money.</p>
-              <small class="text-muted">Published: Aug 14, 2025</small>
-            </div>
-          </div>
-        </div>
-
-        <div class="col">
-          <div class="card h-100 shadow-sm border-0">
-            <div class="ratio ratio-16x9">
-              <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                      title="Gadget X Review" frameborder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowfullscreen></iframe>
-            </div>
-            <div class="card-body">
-              <h5 class="card-title">Review: Gadget X</h5>
-              <p class="card-text">Our deep-dive review of Gadget X. Watch it in action with real tests and benchmarks.</p>
-              <small class="text-muted">Published: Aug 10, 2025</small>
-            </div>
-          </div>
-        </div>
-
-      </div>
+      <!-- dynamic video cards injected by script.js -->
+      <div class="row row-cols-1 row-cols-md-3 g-4" id="videoGrid"></div>
+      <p id="noVideoResults" class="text-muted mt-2" style="display:none;">No videos found.</p>
     </section>
+
+    <!-- Modal player (reused by home + videos page) -->
+    <div class="modal fade" id="videoPlayerModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content bg-dark">
+          <div class="modal-body p-0 ratio ratio-16x9">
+            <iframe id="videoPlayerFrame" src="" title="Video player"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen></iframe>
+          </div>
+          <div class="modal-footer justify-content-between py-2 px-3">
+            <span class="text-white-50 small" id="videoPlayerTitle"></span>
+            <button type="button" class="btn btn-outline-primary btn-sm" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Latest Posts Grid -->
     <section id="latest-posts">
       <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-3">
         <h2 class="mb-2 mb-md-0">Latest Posts</h2>
+        <!-- Added: View All Posts button (keeps alignment; adds top margin on mobile) -->
+        <a href="posts.html" class="btn btn-outline-primary btn-sm mt-2 mt-md-0">View All Posts</a>
       </div>
       <div class="row row-cols-1 row-cols-md-3 g-4 card-grid"></div>
       <p id="noResults" class="text-muted mt-2" style="display:none;">No posts match your search.</p>
     </section>
 
-<!-- Newsletter Hero (Index) -->
-<section class="nl-spotlight text-center my-5">
-  <h2 class="nl-title">
-    Get the <span class="nl-brand">FREE</span> CProReview Newsletter
-  </h2>
+    <!-- Newsletter Hero (Index) -->
+    <section class="nl-spotlight text-center my-5">
+      <h2 class="nl-title">
+        Get the <span class="nl-brand">FREE</span> CProReview Newsletter
+      </h2>
 
-  <p class="nl-sub mx-auto">
-    Honest reviews, curated recommendations, and practical tips.
-  </p>
+      <p class="nl-sub mx-auto">
+        Honest reviews, curated recommendations, and practical tips.
+      </p>
 
-  <!-- Single pill form -->
-  <form id="newsletterFormIndex" class="nl-pill mx-auto" novalidate>
-    <div class="input-group input-group-lg">
-      <input
-        type="email"
-        name="email"
-        class="form-control nl-email"
-        placeholder="Enter your email address"
-        aria-label="Email address"
-        required />
-      <button class="btn btn-cta nl-submit" type="submit">Subscribe</button>
-    </div>
-    <p id="msgIndex" class="mt-2 small text-white-75"></p>
-    <small class="d-block mt-2 text-white-75">No fluff. Just value.</small>
-  </form>
-</section>
+      <!-- Single pill form -->
+      <form id="newsletterFormIndex" class="nl-pill mx-auto" novalidate>
+        <div class="input-group input-group-lg">
+          <input
+            type="email"
+            name="email"
+            class="form-control nl-email"
+            placeholder="Enter your email address"
+            aria-label="Email address"
+            required />
+          <button class="btn btn-cta nl-submit" type="submit">Subscribe</button>
+        </div>
+        <p id="msgIndex" class="mt-2 small text-white-75"></p>
+        <small class="d-block mt-2 text-white-75">No fluff. Just value.</small>
+      </form>
+    </section>
 
   </main>
 
   <!-- Back to top -->
   <button id="backToTop" class="btn btn-primary rounded-circle" type="button" aria-label="Back to top">↑</button>
 
-  <!-- Shared footer -->
+  <!-- Shared footer include (loads footer.html via script.js) -->
   <div id="footer-include"></div>
 </body>
 </html>

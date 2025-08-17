@@ -3,22 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>About — CPro Reviews</title>
+  <title>About - CProReview</title>
 
+  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome (for footer social icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Site styles -->
   <link rel="stylesheet" href="style.css">
 
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
   <script src="script.js" defer></script>
 </head>
 <body>
+  <!-- Shared header -->
   <div id="header-include"></div>
 
   <main class="container-xxl my-5">
     <!-- Hero -->
     <section class="text-center py-5">
-      <img src="assets/images/profile.jpg" alt="Founder Photo" class="rounded-circle mb-4 shadow" width="160" height="160">
+      <!-- Profile image (circular, centered) -->
+      <img src="assets/images/profile.jpg" alt="Profile" class="about-img profile">
       <h1 class="fw-bold mb-3">About CProReview</h1>
       <p class="lead text-muted mx-auto" style="max-width: 720px;">
         At <strong>CProReview</strong>, we believe in <span class="text-danger fw-bold">honest</span> and
@@ -40,7 +49,8 @@
         </p>
       </div>
       <div class="col-md-6 text-center">
-        <img src="assets/images/journey.jpg" alt="Our Journey" class="img-fluid rounded shadow">
+        <!-- Journey image (cropped uniformly) -->
+        <img src="assets/images/journey.jpg" alt="Journey" class="about-img uniform">
       </div>
     </section>
 
@@ -54,21 +64,38 @@
         </p>
       </div>
       <div class="col-md-6 text-center">
-        <img src="assets/images/mission.jpg" alt="Our Mission" class="img-fluid rounded shadow">
+        <!-- Mission image (cropped uniformly) -->
+        <img src="assets/images/mission.jpg" alt="Mission" class="about-img uniform">
       </div>
     </section>
 
     <!-- Call to Action -->
-    <section class="text-center py-5 bg-light rounded shadow-sm">
+    <section class="text-center py-5 bg-light rounded shadow-sm cta-journey">
       <h2 class="fw-bold mb-3">Join Our Journey</h2>
       <p class="lead text-muted mx-auto" style="max-width: 680px;">
         Subscribe to our newsletter for the latest reviews and insights delivered straight to your inbox.  
-        Or connect with us on <a href="https://www.youtube.com/@YourChannelName" class="link-danger fw-bold" target="_blank">YouTube</a> for in-depth video reviews.
+        Or connect with us on <a href="https://www.youtube.com/@cpro-review" class="link-danger fw-bold" target="_blank" rel="noopener">YouTube</a> for in-depth video reviews.
       </p>
-      <a href="index.html" class="btn btn-danger btn-lg mt-3">Subscribe to Newsletter</a>
+
+      <!-- Button row -->
+      <div class="d-flex flex-column flex-sm-row justify-content-center align-items-stretch gap-3 mt-3">
+        <a href="index.html#newsletterFormIndex" class="btn btn-danger btn-lg">
+          Subscribe to Newsletter
+        </a>
+
+        <a href="https://www.youtube.com/@cpro-review" target="_blank" rel="noopener"
+           class="btn btn-danger btn-lg" aria-label="Subscribe to Channel on YouTube">
+          <i class="fa-solid fa-play me-2" aria-hidden="true"></i>
+          Subscribe to Channel
+        </a>
+      </div>
     </section>
   </main>
 
+  <!-- Back to top -->
+  <button id="backToTop" class="btn btn-primary rounded-circle" type="button" aria-label="Back to top">↑</button>
+
+  <!-- Shared footer -->
   <div id="footer-include"></div>
 </body>
 </html>

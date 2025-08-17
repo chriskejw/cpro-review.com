@@ -1,38 +1,52 @@
 <!-- header.html -->
 <header>
   <nav class="navbar navbar-expand-lg site-navbar">
-    <div class="container-xxl">
+    <div class="container-xxl d-flex justify-content-between align-items-center gap-2">
+      
       <!-- Brand -->
       <a class="navbar-brand d-flex align-items-center" href="index.html">
-        <img src="assets/images/logo.png" alt="CPro Reviews Logo" width="40" height="40" class="me-2">
+        <img src="assets/images/logo.png" alt="CPro Reviews Logo" width="36" height="36" class="me-2">
         <span class="fw-bold text-light">CProReview</span>
       </a>
 
+      <!-- Subscribe (mobile) -->
+      <a href="https://www.youtube.com/@cpro-review" target="_blank" rel="noopener"
+        class="btn btn-youtube-nav d-lg-none ms-auto" aria-label="Subscribe on YouTube">
+        <span class="yt-icon" aria-hidden="true"></span>
+        <span class="yt-label">Subscribe</span>
+      </a>
+
       <!-- Toggler -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler ms-2" type="button" data-bs-toggle="collapse"
+              data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <!-- Links -->
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav align-items-lg-center">
-          <li class="nav-item"><a class="nav-link" href="posts.html">Posts</a></li>
-          <li class="nav-item"><a class="nav-link" href="videos.html">Videos</a></li>
-          <li class="nav-item"><a class="nav-link" href="newsletter.html">Newsletter</a></li>
-          <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
-          <li class="nav-item">
-            <form class="d-flex ms-lg-3" role="search">
-              <input id="searchInput" class="form-control form-control-sm" type="search" placeholder="Search..." aria-label="Search">
-            </form>
-          </li>
-          <li class="nav-item ms-lg-3">
-            <a href="https://www.youtube.com/@cpro-review" target="_blank" rel="noopener"
-              class="btn btn-youtube-nav" aria-label="Subscribe on YouTube">
-              <span class="yt-icon" aria-hidden="true"></span>
-              <span class="yt-label">Subscribe</span>
-            </a>
-          </li>
+      <!-- Nav, Search, Subscribe (desktop) -->
+      <div class="collapse navbar-collapse justify-content-end align-items-center mt-3 mt-lg-0" id="navbarNav">
+        <!-- Links -->
+        <ul class="navbar-nav align-items-lg-center gap-lg-1 me-lg-2">
+          <li class="nav-item"><a class="nav-link px-lg-2" href="posts.html">Posts</a></li>
+          <li class="nav-item"><a class="nav-link px-lg-2" href="videos.html">Videos</a></li>
+          <li class="nav-item"><a class="nav-link px-lg-2" href="newsletter.html">Newsletter</a></li>
+          <li class="nav-item"><a class="nav-link px-lg-2" href="about.html">About</a></li>
         </ul>
+
+        <!-- Search -->
+        <form class="d-flex mt-3 mt-lg-0 nav-search ms-lg-3 me-lg-0" role="search">
+          <input id="searchInput"
+                 class="form-control form-control-sm"
+                 type="search"
+                 placeholder="Search..."
+                 aria-label="Search">
+        </form>
+
+        <!-- Subscribe (desktop) -->
+        <a href="https://www.youtube.com/@cpro-review" target="_blank" rel="noopener"
+          class="btn btn-youtube-nav d-none d-lg-inline-flex ms-lg-3" aria-label="Subscribe on YouTube">
+          <span class="yt-icon" aria-hidden="true"></span>
+          <span class="yt-label">Subscribe</span>
+        </a>
       </div>
     </div>
   </nav>

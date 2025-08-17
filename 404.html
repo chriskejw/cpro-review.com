@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Page Not Found — CProReview</title>
+
+  <!-- Bootstrap & site styles -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
+  <script src="script.js" defer></script>
+
+  <style>
+    .error-container {
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+    }
+    .error-title {
+      font-size: clamp(3rem, 6vw, 5rem);
+      font-weight: 800;
+      color: var(--cta-red, #e50914);
+      margin-bottom: 1rem;
+    }
+    .error-subtitle {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+      color: var(--bs-secondary-color, rgba(255,255,255,0.85));
+    }
+    .btn-home {
+      font-weight: 600;
+      padding: .75rem 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Shared header -->
+  <div id="header-include"></div>
+
+  <main class="container-xxl my-5">
+    <section class="error-container">
+      <div class="error-title">404</div>
+      <div class="error-subtitle">Oops! The page you’re looking for doesn’t exist.</div>
+      <a href="index.html" class="btn btn-primary btn-home">⬅ Back to Home</a>
+    </section>
+  </main>
+
+  <!-- Shared footer -->
+  <div id="footer-include"></div>
+</body>
+</html>

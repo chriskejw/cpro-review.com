@@ -6,12 +6,17 @@
       <!-- Brand -->
       <a class="navbar-brand d-flex align-items-center" href="index.html">
         <img src="assets/images/logo.png" alt="CPro Reviews Logo" width="36" height="36" class="me-2">
-        <span class="fw-bold text-light">CProReview</span>
+        <span class="brand-wordmark fw-bold">CPro<span>Review</span></span>
       </a>
+
+      <button class="theme-toggle js-theme-toggle d-lg-none ms-auto" type="button"
+              aria-label="Switch color theme" aria-pressed="false">
+        <i class="fa-solid fa-moon" aria-hidden="true"></i>
+      </button>
 
       <!-- Subscribe (mobile) -->
       <a href="https://www.youtube.com/@cpro-review" target="_blank" rel="noopener"
-        class="btn btn-youtube-nav d-lg-none ms-auto" aria-label="Subscribe on YouTube">
+        class="btn btn-youtube-nav d-lg-none" aria-label="Subscribe on YouTube">
         <span class="yt-icon" aria-hidden="true"></span>
         <span class="yt-label">Subscribe</span>
       </a>
@@ -26,9 +31,10 @@
       <div class="collapse navbar-collapse justify-content-end align-items-center mt-3 mt-lg-0" id="navbarNav">
         <!-- Links -->
         <ul class="navbar-nav align-items-lg-center gap-lg-1 me-lg-2">
-          <li class="nav-item"><a class="nav-link px-lg-2" href="posts.html">Posts</a></li>
+          <li class="nav-item"><a class="nav-link px-lg-2" href="posts.html">Reviews</a></li>
+          <li class="nav-item"><a class="nav-link px-lg-2" href="posts.html#postCategoryChips">Categories</a></li>
           <li class="nav-item"><a class="nav-link px-lg-2" href="videos.html">Videos</a></li>
-          <li class="nav-item"><a class="nav-link px-lg-2" href="newsletter.html">Newsletter</a></li>
+          <li class="nav-item"><a class="nav-link px-lg-2" href="posts.html?category=Guides">Tips</a></li>
           <li class="nav-item"><a class="nav-link px-lg-2" href="about.html">About</a></li>
         </ul>
 
@@ -40,6 +46,11 @@
                  placeholder="Search..."
                  aria-label="Search">
         </form>
+
+        <button class="theme-toggle js-theme-toggle d-none d-lg-inline-flex ms-lg-3 mt-3 mt-lg-0" type="button"
+                aria-label="Switch color theme" aria-pressed="false">
+          <i class="fa-solid fa-moon" aria-hidden="true"></i>
+        </button>
 
         <!-- Subscribe (desktop) -->
         <a href="https://www.youtube.com/@cpro-review" target="_blank" rel="noopener"

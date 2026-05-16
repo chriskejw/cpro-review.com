@@ -45,39 +45,107 @@
   <!-- Shared header include (loads header.html via script.js) -->
   <div id="header-include"></div>
 
-  <main class="container-xxl my-5">
+  <main>
 
-    <!-- Featured Posts -->
-    <section class="featured-editorial mb-5">
-      <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-3">
-        <h2 class="mb-2 mb-md-0">Featured Reviews</h2>
-        <a href="posts.html" class="btn btn-outline-primary btn-sm mt-2 mt-md-0">Browse All Posts</a>
-      </div>
-      <div class="row g-4" id="featuredPosts">
-        <div class="col-lg-7" id="featured-primary"></div>
-        <div class="col-lg-5">
-          <div class="featured-secondary-grid" id="featured-secondary"></div>
+    <section class="hero-shell">
+      <div class="container-xxl">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <span class="eyebrow">Real reviews. Smarter choices.</span>
+            <h1>Unbiased Reviews. <span>Better Decisions.</span></h1>
+            <p>In-depth product reviews, expert recommendations, and practical tips to help you buy with confidence.</p>
+            <div class="hero-actions">
+              <a href="posts.html" class="btn btn-primary btn-lg">Explore Reviews</a>
+              <a href="posts.html?category=Accessories" class="btn btn-ghost btn-lg">See Best Picks</a>
+            </div>
+          </div>
+
+          <div class="hero-visual" aria-label="Featured tech products">
+            <div class="hero-halo"></div>
+            <div class="hero-pedestal"></div>
+            <img class="hero-product hero-main-product" src="assets/images/post2.jpg" alt="Featured gadget review">
+            <img class="hero-product hero-side-product" src="assets/images/post5.jpg" alt="Featured accessories">
+            <div class="hero-score">
+              <span>9.4</span>
+              <small>Review score</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="trust-row">
+          <article>
+            <i class="fa-solid fa-shield-halved"></i>
+            <div>
+              <h2>Tested &amp; Verified</h2>
+              <p>Hands-on testing before recommendations.</p>
+            </div>
+          </article>
+          <article>
+            <i class="fa-solid fa-scale-balanced"></i>
+            <div>
+              <h2>Unbiased &amp; Independent</h2>
+              <p>Clear pros, cons, and honest verdicts.</p>
+            </div>
+          </article>
+          <article>
+            <i class="fa-regular fa-clock"></i>
+            <div>
+              <h2>Up-to-Date</h2>
+              <p>Fresh advice for current products.</p>
+            </div>
+          </article>
+          <article>
+            <i class="fa-solid fa-bullseye"></i>
+            <div>
+              <h2>For Smart Buyers</h2>
+              <p>Practical guidance before you spend.</p>
+            </div>
+          </article>
         </div>
       </div>
     </section>
 
-    <section class="mb-5">
-      <h2 class="mb-3">Browse by Category</h2>
-      <div class="category-chip-row" id="homeCategoryLinks"></div>
-    </section>
+    <div class="container-xxl page-stack">
+      <section class="featured-editorial">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">Featured Reviews</span>
+            <h2>Reviewed picks worth your attention</h2>
+          </div>
+          <a href="posts.html" class="section-link">View all reviews <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="row g-4" id="featuredPosts">
+          <div class="col-lg-7" id="featured-primary"></div>
+          <div class="col-lg-5">
+            <div class="featured-secondary-grid" id="featured-secondary"></div>
+          </div>
+        </div>
+      </section>
 
-    <!-- Latest Videos -->
-    <section class="mb-5">
-      <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-3">
-        <h2 class="mb-2 mb-md-0">Latest Videos</h2>
-        <!-- Added: View All Videos button (keeps alignment; adds top margin on mobile) -->
-        <a href="videos.html" class="btn btn-outline-primary btn-sm mt-2 mt-md-0">View All Videos</a>
-      </div>
+      <section>
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">Browse by Category</span>
+            <h2>Find the right tech faster</h2>
+          </div>
+          <a href="posts.html" class="section-link">View all categories <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="category-tile-grid" id="homeCategoryLinks"></div>
+      </section>
 
-      <!-- dynamic video cards injected by script.js -->
-      <div class="row row-cols-1 row-cols-md-3 g-4" id="videoGrid"></div>
-      <p id="noVideoResults" class="text-muted mt-2" style="display:none;">No videos found.</p>
-    </section>
+      <!-- Latest Videos -->
+      <section>
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">Latest Videos</span>
+            <h2>Watch our newest breakdowns</h2>
+          </div>
+          <a href="videos.html" class="section-link">View all videos <span aria-hidden="true">→</span></a>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-3 g-4" id="videoGrid"></div>
+        <p id="noVideoResults" class="text-muted mt-2" style="display:none;">No videos found.</p>
+      </section>
 
     <!-- Modal player (reused by home + videos page) -->
     <div class="modal fade" id="videoPlayerModal" tabindex="-1" aria-hidden="true">
@@ -96,43 +164,40 @@
       </div>
     </div>
 
-    <!-- Latest Posts Grid -->
     <section id="latest-posts">
-      <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-3">
-        <h2 class="mb-2 mb-md-0">Latest Posts</h2>
-        <!-- Added: View All Posts button (keeps alignment; adds top margin on mobile) -->
-        <a href="posts.html" class="btn btn-outline-primary btn-sm mt-2 mt-md-0">View All Posts</a>
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Latest Posts</span>
+          <h2>Guides, tips, and buying advice</h2>
+        </div>
+        <a href="posts.html" class="section-link">View all posts <span aria-hidden="true">→</span></a>
       </div>
-      <div class="row row-cols-1 row-cols-md-3 g-4 card-grid"></div>
+      <div class="latest-post-list card-grid"></div>
       <p id="noResults" class="text-muted mt-2" style="display:none;">No posts match your search.</p>
     </section>
 
-    <!-- Newsletter Hero (Index) -->
-    <section class="nl-spotlight text-center my-5">
-      <h2 class="nl-title">
-        Get your <span class="nl-brand">FREE</span> CProReview Newsletter
-      </h2>
-
-      <p class="nl-sub mx-auto">
-        Honest reviews, curated recommendations, and practical tips.
-      </p>
-
-      <!-- Single pill form -->
-      <form id="newsletterFormIndex" class="nl-pill mx-auto" novalidate>
-        <div class="input-group input-group-lg">
-          <input
-            type="email"
-            name="email"
-            class="form-control nl-email"
-            placeholder="Enter your email address"
-            aria-label="Email address"
-            required />
-          <button class="btn btn-cta nl-submit" type="submit">Subscribe</button>
+      <section class="nl-spotlight home-newsletter">
+        <div>
+          <span class="eyebrow">Newsletter</span>
+          <h2 class="nl-title">Stay Ahead. Stay Informed.</h2>
+          <p class="nl-sub">Get the latest reviews, buying guides, and exclusive picks straight to your inbox.</p>
         </div>
-        <p id="msgIndex" class="mt-2 small text-white-75"></p>
-        <small class="d-block mt-2 text-white-75">No fluff. Just value.</small>
-      </form>
-    </section>
+        <form id="newsletterFormIndex" class="nl-pill" novalidate>
+          <div class="input-group input-group-lg">
+            <input
+              type="email"
+              name="email"
+              class="form-control nl-email"
+              placeholder="Enter your email address"
+              aria-label="Email address"
+              required />
+            <button class="btn btn-cta nl-submit" type="submit">Subscribe</button>
+          </div>
+          <p id="msgIndex" class="mt-2 small text-white-75"></p>
+          <small class="d-block mt-2 text-white-75">No spam. Unsubscribe anytime.</small>
+        </form>
+      </section>
+    </div>
 
   </main>
 

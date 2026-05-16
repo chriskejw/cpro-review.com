@@ -13,6 +13,7 @@ const VIDEOS_PER_PAGE = 9;
 // HOME LIMITS (homepage shows newest 6 each)
 const HOME_POSTS_LIMIT  = 6;
 const HOME_VIDEOS_LIMIT = 6;
+const THEME_KEY = "cproreview-theme";
 
 // State
 let ALL_CARDS = [];  // posts
@@ -21,15 +22,51 @@ let ALL_VIDS  = [];  // videos
 let POSTS_STATE  = { page: 1, category: "all",  query: "", categories: [] };
 let VIDEOS_STATE = { page: 1, category: "all",  query: "", categories: [] };
 
+applyInitialTheme();
+
+function getPreferredTheme() {
+  try {
+    const saved = localStorage.getItem(THEME_KEY);
+    if (saved === "dark" || saved === "light") return saved;
+  } catch {}
+  return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+function applyInitialTheme() {
+  document.documentElement.dataset.theme = getPreferredTheme();
+}
+
+function setTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  try { localStorage.setItem(THEME_KEY, theme); } catch {}
+  updateThemeToggle(theme);
+}
+
+function updateThemeToggle(theme = document.documentElement.dataset.theme) {
+  const isDark = theme === "dark";
+  document.querySelectorAll(".js-theme-toggle").forEach(btn => {
+    btn.setAttribute("aria-pressed", String(isDark));
+    btn.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
+    btn.innerHTML = `<i class="fa-solid ${isDark ? "fa-sun" : "fa-moon"}" aria-hidden="true"></i>`;
+  });
+}
+
+function initThemeToggle() {
+  const buttons = document.querySelectorAll(".js-theme-toggle");
+  if (!buttons.length) return;
+  updateThemeToggle();
+  buttons.forEach(btn => btn.addEventListener("click", () => {
+    const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    setTheme(next);
+  }));
+}
+
 // =========================
 /* BOOT */
 // =========================
 document.addEventListener("DOMContentLoaded", async () => {
-  // lock to light (clear old theme setting if any)
-  document.documentElement.removeAttribute("data-theme");
-  try { localStorage.removeItem("theme"); } catch {}
-
   await loadIncludes();
+  initThemeToggle();
 
   // Enable search only on these pages
   const allowedSearchPages = ["index.html", "posts.html", "videos.html"];
@@ -224,11 +261,11 @@ function initHome() {
         ALL_CARDS = cards;
 
         renderFeaturedPosts(cards, featuredPrimary, featuredSecondary);
-        renderCategoryChips(homeCategoryLinks, getCategories(cards), "posts.html");
+        renderHomeCategoryTiles(homeCategoryLinks);
 
         // Latest posts grid on home — limit to 6
         if (postGrid) {
-          renderPostCards(cards.slice(0, HOME_POSTS_LIMIT), postGrid);
+          renderCompactPostCards(cards.slice(0, HOME_POSTS_LIMIT), postGrid);
 
           if (searchInput) {
             const doFilter = () => {
@@ -239,7 +276,7 @@ function initHome() {
                     (c.description && c.description.toLowerCase().includes(q))
                   ).slice(0, HOME_POSTS_LIMIT)
                 : ALL_CARDS.slice(0, HOME_POSTS_LIMIT);
-              renderPostCards(filtered, postGrid);
+              renderCompactPostCards(filtered, postGrid);
               if (noResults) noResults.style.display = filtered.length ? "none" : "block";
             };
             searchInput.addEventListener("input", doFilter, { passive: true });
@@ -482,6 +519,34 @@ function renderCategoryChips(container, categories, targetPage) {
   container.innerHTML = `<a class="category-chip active" href="${targetPage}">All</a>${chips}`;
 }
 
+function renderHomeCategoryTiles(container) {
+  if (!container) return;
+  const tiles = [
+    ["Audio", "fa-headphones", "40+ reviews"],
+    ["Laptops", "fa-laptop", "Buying guides"],
+    ["Cameras", "fa-camera", "Field tested"],
+    ["Smart Home", "fa-house", "Useful upgrades"],
+    ["Networking", "fa-wifi", "Routers & mesh"],
+    ["Wearables", "fa-mobile-screen-button", "Daily tech"],
+    ["Accessories", "fa-keyboard", "Desk essentials"],
+    ["Office", "fa-briefcase", "Work setup"]
+  ];
+
+  container.innerHTML = tiles.map(([label, icon, meta]) => {
+    const category = label === "Audio" || label === "Laptops" || label === "Cameras" || label === "Smart Home" || label === "Networking" || label === "Wearables" || label === "Office"
+      ? "Reviews"
+      : label;
+    const url = setQueryParam("category", category, new URL("posts.html", window.location.href));
+    return `
+      <a class="category-tile" href="${url}">
+        <span><i class="fa-solid ${icon}"></i></span>
+        <strong>${escapeHtml(label)}</strong>
+        <small>${escapeHtml(meta)}</small>
+      </a>
+    `;
+  }).join("");
+}
+
 function renderFeaturedPosts(cards, primaryEl, secondaryEl) {
   if (!primaryEl && !secondaryEl) return;
   const featured = cards.filter(c => c.featured);
@@ -493,9 +558,13 @@ function renderFeaturedPosts(cards, primaryEl, secondaryEl) {
       <article class="featured-primary-card">
         <img src="${primary.image || 'assets/images/post1.jpg'}" alt="${escapeHtml(primary.title)}">
         <div class="featured-primary-body">
-          <span class="badge rounded-pill bg-danger category-pill">${escapeHtml(primary.category || "Review")}</span>
+          <div class="review-card-topline">
+            <span class="badge rounded-pill bg-danger category-pill">${escapeHtml(primary.category || "Review")}</span>
+            <span class="score-badge">9.4</span>
+          </div>
           <h3>${escapeHtml(primary.title)}</h3>
           <p>${escapeHtml(primary.description || "")}</p>
+          <div class="stars" aria-label="Rating 4.5 out of 5">★★★★★</div>
           <a class="btn btn-primary btn-sm" href="${primary.link}">Read Review</a>
         </div>
       </article>
@@ -507,14 +576,40 @@ function renderFeaturedPosts(cards, primaryEl, secondaryEl) {
       <article class="featured-secondary-card">
         <img src="${item.image || 'assets/images/post1.jpg'}" alt="${escapeHtml(item.title)}">
         <div>
-          <span class="text-muted small">${escapeHtml(timeAgoLimited(item.date))}</span>
+          <div class="review-card-topline">
+            <span class="badge rounded-pill bg-danger category-pill">${escapeHtml(item.category || "Review")}</span>
+            <span class="score-badge small-score">9.1</span>
+          </div>
           <h3>${escapeHtml(item.title)}</h3>
           <p>${escapeHtml(item.description || "")}</p>
-          <a href="${item.link}">Read More</a>
+          <a href="${item.link}">Read Review</a>
         </div>
       </article>
     `).join("");
   }
+}
+
+function renderCompactPostCards(items, container) {
+  container.innerHTML = "";
+  items.forEach(card => {
+    const item = document.createElement("article");
+    item.className = "compact-post-card reveal";
+    const ago = timeAgoLimited(card.date);
+    item.innerHTML = `
+      <img src="${card.image || 'assets/images/post1.jpg'}" alt="${escapeHtml(card.title)}" loading="lazy">
+      <div>
+        <div class="card-meta">
+          <span>${escapeHtml(card.category || "Post")}</span>
+          <span aria-hidden="true">•</span>
+          <span title="${escapeHtml(card.date || "")}">${escapeHtml(ago)}</span>
+        </div>
+        <h3>${escapeHtml(card.title)}</h3>
+        <p>${escapeHtml(card.description || "")}</p>
+        <a href="${card.link}" aria-label="Read post: ${escapeHtml(card.title)}">Read Post</a>
+      </div>
+    `;
+    container.appendChild(item);
+  });
 }
 
 function renderPostCards(items, container) {

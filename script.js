@@ -94,11 +94,26 @@ function getQueryParam(name) {
   const params = new URLSearchParams(window.location.search);
   return params.get(name) || "";
 }
+function getCurrentPage() {
+  const path = window.location.pathname;
+  return path.substring(path.lastIndexOf("/") + 1) || "index.html";
+}
 function setQueryParam(name, value, targetUrl = null) {
   const url = new URL(targetUrl || window.location.href);
   if (value) url.searchParams.set(name, value);
   else url.searchParams.delete(name);
   return url.toString();
+}
+
+async function fetchJson(file) {
+  const res = await fetch(file, { cache: "no-cache" });
+  if (!res.ok) throw new Error(`${file} returned ${res.status}`);
+  return res.json();
+}
+
+function showLoadError(container, message) {
+  if (!container) return;
+  container.innerHTML = `<div class="col-12"><p class="text-muted mb-0">${escapeHtml(message)}</p></div>`;
 }
 
 // Navbar search → posts.html?q=
@@ -109,7 +124,9 @@ function wireGlobalSearchNavigation() {
   input.addEventListener("keydown", (e) => {
     if (e.key !== "Enter") return;
     const q = (input.value || "").trim();
-    const url = setQueryParam("q", q, new URL("posts.html", window.location.href));
+    const page = getCurrentPage();
+    const target = page === "videos.html" ? "videos.html" : "posts.html";
+    const url = setQueryParam("q", q, new URL(target, window.location.href));
     window.location.href = url;
   });
 }
@@ -198,8 +215,8 @@ function initHome() {
 
   // Build Featured Posts carousel & Latest Posts grid
   if (postIndicators && postInner) {
-    fetch("posts.json", { cache: "no-cache" })
-      .then(r => r.json())
+    postInner.innerHTML = `<div class="text-muted py-5 text-center">Loading featured posts...</div>`;
+    fetchJson("posts.json")
       .then(cards => {
         sortByNewest(cards);
         ALL_CARDS = cards;
@@ -256,7 +273,11 @@ function initHome() {
 
         initReveal();
       })
-      .catch(err => console.error("posts.json error:", err));
+      .catch(err => {
+        console.error("posts.json error:", err);
+        showLoadError(postGrid, "Posts could not be loaded right now.");
+        if (postInner) postInner.innerHTML = "";
+      });
   }
 
   // Latest Videos grid on home — limit to 6
@@ -264,8 +285,8 @@ function initHome() {
   const noVideoResults = document.getElementById("noVideoResults");
 
   if (homeVideoGrid) {
-    fetch("videos.json", { cache: "no-cache" })
-      .then(r => r.json())
+    homeVideoGrid.innerHTML = `<div class="col"><div class="text-muted py-4">Loading videos...</div></div>`;
+    fetchJson("videos.json")
       .then(videos => {
         sortByNewest(videos);
         ALL_VIDS = videos;
@@ -283,7 +304,10 @@ function initHome() {
         setupVideoModal();
         initReveal();
       })
-      .catch(err => console.error("videos.json error:", err));
+      .catch(err => {
+        console.error("videos.json error:", err);
+        showLoadError(homeVideoGrid, "Videos could not be loaded right now.");
+      });
   }
 }
 
@@ -301,8 +325,7 @@ function initPostsPage() {
   const seedQ = getQueryParam("q");
   if (seedQ && searchInput) searchInput.value = seedQ;
 
-  fetch("posts.json", { cache: "no-cache" })
-    .then(r => r.json())
+  fetchJson("posts.json")
     .then(cards => {
       sortByNewest(cards);
       ALL_CARDS = cards;
@@ -335,7 +358,11 @@ function initPostsPage() {
 
       applyAndRender();
     })
-    .catch(err => console.error("posts.json error:", err));
+    .catch(err => {
+      console.error("posts.json error:", err);
+      showLoadError(grid, "Posts could not be loaded right now.");
+      if (pager) pager.innerHTML = "";
+    });
 }
 
 function renderPostsPage(grid, pager, items, noResults) {
@@ -378,8 +405,7 @@ function initVideosPage() {
   const seedQ = getQueryParam("q");
   if (seedQ && searchInput) searchInput.value = seedQ;
 
-  fetch("videos.json", { cache: "no-cache" })
-    .then(r => r.json())
+  fetchJson("videos.json")
     .then(videos => {
       sortByNewest(videos);
       ALL_VIDS = videos;
@@ -413,7 +439,11 @@ function initVideosPage() {
       applyAndRender();
       setupVideoModal();
     })
-    .catch(err => console.error("videos.json error:", err));
+    .catch(err => {
+      console.error("videos.json error:", err);
+      showLoadError(grid, "Videos could not be loaded right now.");
+      if (pager) pager.innerHTML = "";
+    });
 }
 
 function renderVideosPage(grid, pager, items, noResults) {
@@ -671,7 +701,7 @@ function getYouTubeId(url) {
   return "";
 }
 function youTubeThumb(id, quality="hqdefault") {
-  return id ? `https://img.youtube.com/vi/${id}/${quality}.jpg` : "assets/images/video-thumb.jpg";
+  return id ? `https://img.youtube.com/vi/${id}/${quality}.jpg` : "assets/images/post1.jpg";
 }
 
 function initReveal() {
@@ -724,6 +754,16 @@ function enableSmoothScroll() {
 function initNewsletter() {
   // (home hero)
   const formIndex = document.getElementById("newsletterFormIndex");
+  const setSubmitting = (form, isSubmitting) => {
+    const btn = form?.querySelector("button[type='submit']");
+    const input = form?.querySelector("input[type='email']");
+    if (btn) {
+      if (!btn.dataset.defaultText) btn.dataset.defaultText = btn.textContent;
+      btn.disabled = isSubmitting;
+      btn.textContent = isSubmitting ? "Subscribing..." : btn.dataset.defaultText;
+    }
+    if (input) input.disabled = isSubmitting;
+  };
   const send = async (name, email, msgEl) => {
     await fetch(GOOGLE_APPS_SCRIPT_URL, {
       method: "POST",
@@ -731,10 +771,11 @@ function initNewsletter() {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: `email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}`
     });
-    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { name, email });
+    if (!window.emailjs) throw new Error("EmailJS is not available");
+    await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { name, email });
     if (msgEl) {
       msgEl.className = "mt-2 text-white-75";
-      msgEl.textContent = "You're in! 🎉 Check your inbox for a confirmation.";
+      msgEl.innerHTML = `You're in! Check your inbox, then grab your <a class="text-white fw-bold" href="bonus.html">subscriber bonuses</a>.`;
     }
   };
 
@@ -745,11 +786,14 @@ function initNewsletter() {
       const email = formIndex.querySelector("[name='email']")?.value?.trim() || "";
       if (!email) return alert("Please enter an email");
       try {
+        setSubmitting(formIndex, true);
         await send(name, email, document.getElementById("msgIndex"));
         formIndex.reset();
       } catch (err) {
         console.error("Newsletter error:", err);
-        alert("Subscription failed.");
+        alert("Subscription failed. Please try again in a moment.");
+      } finally {
+        setSubmitting(formIndex, false);
       }
     });
   }
@@ -763,11 +807,14 @@ function initNewsletter() {
     const email = form.querySelector("[name='email']")?.value?.trim() || "";
     if (!email) return alert("Please enter an email");
     try {
+      setSubmitting(form, true);
       await send(name, email, document.getElementById("msg"));
       form.reset();
     } catch (err) {
       console.error("Newsletter error:", err);
-      alert("Subscription failed.");
+      alert("Subscription failed. Please try again in a moment.");
+    } finally {
+      setSubmitting(form, false);
     }
   });
 }
@@ -847,4 +894,3 @@ function initPostDetailMeta() {
   agoEl.textContent = `${ago}`;
   agoEl.title = raw;
 }
-

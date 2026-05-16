@@ -68,6 +68,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // update post detail meta (time-ago on post pages)
   initPostDetailMeta();
+  initRelatedPosts();
 });
 
 // =========================
@@ -99,7 +100,7 @@ function getCurrentPage() {
   return path.substring(path.lastIndexOf("/") + 1) || "index.html";
 }
 function setQueryParam(name, value, targetUrl = null) {
-  const url = new URL(targetUrl || window.location.href);
+  const url = targetUrl ? new URL(targetUrl, window.location.href) : new URL(window.location.href);
   if (value) url.searchParams.set(name, value);
   else url.searchParams.delete(name);
   return url.toString();
@@ -207,27 +208,25 @@ function timeAgoLimited(dateStr) {
 // =========================
 function initHome() {
   const postGrid        = document.querySelector(".card-grid");
-  const postIndicators  = document.getElementById("featured-indicators");
-  const postInner       = document.getElementById("featured-inner");
+  const featuredPrimary = document.getElementById("featured-primary");
+  const featuredSecondary = document.getElementById("featured-secondary");
+  const homeCategoryLinks = document.getElementById("homeCategoryLinks");
 
   const noResults       = document.getElementById("noResults");
   const searchInput     = document.getElementById("searchInput");
 
   // Build Featured Posts carousel & Latest Posts grid
-  if (postIndicators && postInner) {
-    postInner.innerHTML = `<div class="text-muted py-5 text-center">Loading featured posts...</div>`;
+  if (featuredPrimary || featuredSecondary || postGrid || homeCategoryLinks) {
+    if (featuredPrimary) featuredPrimary.innerHTML = `<p class="text-muted mb-0">Loading featured posts...</p>`;
     fetchJson("posts.json")
       .then(cards => {
         sortByNewest(cards);
         ALL_CARDS = cards;
 
-        const featured = cards.filter(c => c.featured);
-        const slides = (featured.length >= 3 ? featured : cards).slice(0, 3);
+        renderFeaturedPosts(cards, featuredPrimary, featuredSecondary);
+        renderCategoryChips(homeCategoryLinks, getCategories(cards), "posts.html");
 
-        postIndicators.innerHTML = "";
-        postInner.innerHTML = "";
-
-        slides.forEach((c, i) => {
+        /*
           const active = i === 0 ? "active" : "";
           const btn = document.createElement("button");
           btn.type = "button";
@@ -249,7 +248,7 @@ function initHome() {
             </div>
           `;
           postInner.appendChild(item);
-        });
+        */
 
         // Latest posts grid on home — limit to 6
         if (postGrid) {
@@ -276,7 +275,8 @@ function initHome() {
       .catch(err => {
         console.error("posts.json error:", err);
         showLoadError(postGrid, "Posts could not be loaded right now.");
-        if (postInner) postInner.innerHTML = "";
+        showLoadError(featuredPrimary, "Featured posts could not be loaded right now.");
+        if (featuredSecondary) featuredSecondary.innerHTML = "";
       });
   }
 
@@ -334,6 +334,13 @@ function initPostsPage() {
       cards.forEach(c => set.add((c.category || "General").trim()));
       POSTS_STATE.categories = Array.from(set);
       populateSelect(catSelect, POSTS_STATE.categories);
+      renderCategoryChips(document.getElementById("postCategoryChips"), POSTS_STATE.categories.filter(c => c !== "all"), "posts.html");
+
+      const seedCategory = getQueryParam("category");
+      if (seedCategory && POSTS_STATE.categories.includes(seedCategory)) {
+        POSTS_STATE.category = seedCategory;
+        catSelect.value = seedCategory;
+      }
 
       const applyAndRender = () => {
         POSTS_STATE.query = (searchInput?.value || "").toLowerCase().trim();
@@ -344,6 +351,8 @@ function initPostsPage() {
       catSelect.addEventListener("change", (e) => {
         POSTS_STATE.category = e.target.value;
         POSTS_STATE.page = 1;
+        const newUrl = setQueryParam("category", POSTS_STATE.category === "all" ? "" : POSTS_STATE.category);
+        window.history.replaceState({}, "", newUrl);
         applyAndRender();
       });
 
@@ -414,6 +423,13 @@ function initVideosPage() {
       videos.forEach(v => set.add((v.category || "General").trim()));
       VIDEOS_STATE.categories = Array.from(set);
       populateSelect(catSelect, VIDEOS_STATE.categories);
+      renderCategoryChips(document.getElementById("videoCategoryChips"), VIDEOS_STATE.categories.filter(c => c !== "all"), "videos.html");
+
+      const seedCategory = getQueryParam("category");
+      if (seedCategory && VIDEOS_STATE.categories.includes(seedCategory)) {
+        VIDEOS_STATE.category = seedCategory;
+        catSelect.value = seedCategory;
+      }
 
       const applyAndRender = () => {
         VIDEOS_STATE.query = (searchInput?.value || "").toLowerCase().trim();
@@ -424,6 +440,8 @@ function initVideosPage() {
       catSelect.addEventListener("change", (e) => {
         VIDEOS_STATE.category = e.target.value;
         VIDEOS_STATE.page = 1;
+        const newUrl = setQueryParam("category", VIDEOS_STATE.category === "all" ? "" : VIDEOS_STATE.category);
+        window.history.replaceState({}, "", newUrl);
         applyAndRender();
       });
 
@@ -475,6 +493,54 @@ function renderVideosPage(grid, pager, items, noResults) {
 // =========================
 /* RENDER HELPERS (with category pill + time-ago) */
 // =========================
+function getCategories(items) {
+  return Array.from(new Set(items.map(i => (i.category || "General").trim()))).sort((a, b) => a.localeCompare(b));
+}
+
+function renderCategoryChips(container, categories, targetPage) {
+  if (!container) return;
+  const chips = categories.map(cat => {
+    const url = setQueryParam("category", cat, new URL(targetPage, window.location.href));
+    return `<a class="category-chip" href="${url}">${escapeHtml(cat)}</a>`;
+  }).join("");
+  container.innerHTML = `<a class="category-chip active" href="${targetPage}">All</a>${chips}`;
+}
+
+function renderFeaturedPosts(cards, primaryEl, secondaryEl) {
+  if (!primaryEl && !secondaryEl) return;
+  const featured = cards.filter(c => c.featured);
+  const items = (featured.length >= 3 ? featured : cards).slice(0, 3);
+  const [primary, ...secondary] = items;
+
+  if (primaryEl && primary) {
+    primaryEl.innerHTML = `
+      <article class="featured-primary-card">
+        <img src="${primary.image || 'assets/images/post1.jpg'}" alt="${escapeHtml(primary.title)}">
+        <div class="featured-primary-body">
+          <span class="badge rounded-pill bg-danger category-pill">${escapeHtml(primary.category || "Review")}</span>
+          <h3>${escapeHtml(primary.title)}</h3>
+          <p>${escapeHtml(primary.description || "")}</p>
+          <a class="btn btn-primary btn-sm" href="${primary.link}">Read Review</a>
+        </div>
+      </article>
+    `;
+  }
+
+  if (secondaryEl) {
+    secondaryEl.innerHTML = secondary.map(item => `
+      <article class="featured-secondary-card">
+        <img src="${item.image || 'assets/images/post1.jpg'}" alt="${escapeHtml(item.title)}">
+        <div>
+          <span class="text-muted small">${escapeHtml(timeAgoLimited(item.date))}</span>
+          <h3>${escapeHtml(item.title)}</h3>
+          <p>${escapeHtml(item.description || "")}</p>
+          <a href="${item.link}">Read More</a>
+        </div>
+      </article>
+    `).join("");
+  }
+}
+
 function renderPostCards(items, container) {
   container.innerHTML = "";
   items.forEach(card => {
@@ -520,6 +586,9 @@ function renderVideoCards(items, container) {
     const categoryPill = v.category
       ? `<span class="badge rounded-pill bg-danger category-pill">${escapeHtml(v.category)}</span>`
       : "";
+    const durationBadge = v.duration
+      ? `<span class="video-duration">${escapeHtml(v.duration)}</span>`
+      : "";
 
     const ago = timeAgoLimited(v.date);
 
@@ -533,6 +602,7 @@ function renderVideoCards(items, container) {
            aria-label="Play video: ${escapeHtml(v.title)}">
         <div class="thumb-wrap">
           <img src="${thumb}" alt="${escapeHtml(v.title)}" class="card-img-top" loading="lazy">
+          ${durationBadge}
           <button type="button" class="play-btn btn btn-primary rounded-circle" aria-hidden="true">▶</button>
         </div>
         <div class="card-body">
@@ -893,4 +963,43 @@ function initPostDetailMeta() {
   // agoEl.textContent = `• ${ago}`;
   agoEl.textContent = `${ago}`;
   agoEl.title = raw;
+}
+
+function initRelatedPosts() {
+  const container = document.getElementById("relatedPosts");
+  if (!container) return;
+  const current = container.dataset.current || "";
+  const category = container.dataset.category || "";
+
+  fetchJson("posts.json")
+    .then(cards => {
+      sortByNewest(cards);
+      const related = cards
+        .filter(card => card.link !== current)
+        .sort((a, b) => {
+          const ac = (a.category || "") === category ? 0 : 1;
+          const bc = (b.category || "") === category ? 0 : 1;
+          return ac - bc;
+        })
+        .slice(0, 3);
+
+      if (!related.length) {
+        container.innerHTML = "";
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-3">
+          <h2 class="mb-2 mb-md-0">Related Posts</h2>
+          <a href="posts.html" class="btn btn-outline-primary btn-sm">All Posts</a>
+        </div>
+        <div class="row row-cols-1 row-cols-md-3 g-4 card-grid related-grid"></div>
+      `;
+      renderPostCards(related, container.querySelector(".related-grid"));
+      initReveal();
+    })
+    .catch(err => {
+      console.error("related posts error:", err);
+      container.innerHTML = "";
+    });
 }

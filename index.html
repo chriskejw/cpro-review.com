@@ -47,19 +47,23 @@
 
   <main class="container-xxl my-5">
 
-    <!-- Featured Posts Carousel -->
-    <section class="featured mb-5">
-      <div id="featuredCarousel" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-indicators" id="featured-indicators"></div>
-        <div class="carousel-inner" id="featured-inner"></div>
-
-        <button class="carousel-control-prev" type="button" data-bs-target="#featuredCarousel" data-bs-slide="prev" aria-label="Previous">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#featuredCarousel" data-bs-slide="next" aria-label="Next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        </button>
+    <!-- Featured Posts -->
+    <section class="featured-editorial mb-5">
+      <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-3">
+        <h2 class="mb-2 mb-md-0">Featured Reviews</h2>
+        <a href="posts.html" class="btn btn-outline-primary btn-sm mt-2 mt-md-0">Browse All Posts</a>
       </div>
+      <div class="row g-4" id="featuredPosts">
+        <div class="col-lg-7" id="featured-primary"></div>
+        <div class="col-lg-5">
+          <div class="featured-secondary-grid" id="featured-secondary"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-5">
+      <h2 class="mb-3">Browse by Category</h2>
+      <div class="category-chip-row" id="homeCategoryLinks"></div>
     </section>
 
     <!-- Latest Videos -->

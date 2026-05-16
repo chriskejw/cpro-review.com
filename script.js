@@ -226,30 +226,6 @@ function initHome() {
         renderFeaturedPosts(cards, featuredPrimary, featuredSecondary);
         renderCategoryChips(homeCategoryLinks, getCategories(cards), "posts.html");
 
-        /*
-          const active = i === 0 ? "active" : "";
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.setAttribute("data-bs-target", "#featuredCarousel");
-          btn.setAttribute("data-bs-slide-to", String(i));
-          btn.className = active;
-          btn.setAttribute("aria-label", `Slide ${i + 1}`);
-          if (i === 0) btn.setAttribute("aria-current", "true");
-          postIndicators.appendChild(btn);
-
-          const item = document.createElement("div");
-          item.className = `carousel-item ${active}`;
-          item.innerHTML = `
-            <img src="${c.image || 'assets/images/post1.jpg'}" class="d-block w-100 featured-img" alt="${escapeHtml(c.title)}">
-            <div class="carousel-caption text-start">
-              <h2 class="fw-bold text-white">${escapeHtml(c.title)}</h2>
-              <p class="lead caption-text">${escapeHtml(c.description || "")}</p>
-              <a class="btn btn-outline-primary btn-sm card-cta" href="${c.link}">Read More →</a>
-            </div>
-          `;
-          postInner.appendChild(item);
-        */
-
         // Latest posts grid on home — limit to 6
         if (postGrid) {
           renderPostCards(cards.slice(0, HOME_POSTS_LIMIT), postGrid);
@@ -609,7 +585,9 @@ function renderVideoCards(items, container) {
           <img src="${thumb}" alt="${escapeHtml(v.title)}" class="card-img-top" loading="lazy">
           ${categoryPill}
           ${durationBadge}
-          <button type="button" class="play-btn btn btn-primary rounded-circle" aria-hidden="true">▶</button>
+          <button type="button" class="play-btn btn btn-primary rounded-circle" aria-hidden="true">
+            <i class="fa-solid fa-play"></i>
+          </button>
         </div>
         <div class="card-body">
           <div class="card-meta">

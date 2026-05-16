@@ -552,16 +552,21 @@ function renderPostCards(items, container) {
       : "";
 
     const ago = timeAgoLimited(card.date);
+    const readTime = card.readTime || estimateReadTime(`${card.title || ""} ${card.description || ""}`);
 
     col.innerHTML = `
-      <div class="card h-100 shadow-sm border-0 clickable-card">
-        <img src="${card.image || 'assets/images/post1.jpg'}" class="card-img-top" alt="${escapeHtml(card.title)}">
+      <article class="card h-100 shadow-sm border-0 clickable-card post-card-modern">
+        <div class="card-media">
+          <img src="${card.image || 'assets/images/post1.jpg'}" class="card-img-top" alt="${escapeHtml(card.title)}" loading="lazy">
+          ${categoryPill}
+        </div>
         <div class="card-body">
-          <h5 class="card-title">${escapeHtml(card.title)}</h5>
-          <h6 class="card-subtitle mb-2 text-muted d-flex align-items-center gap-2">
+          <div class="card-meta">
             <span title="${escapeHtml(card.date || '')}">${escapeHtml(ago)}</span>
-            ${categoryPill}
-          </h6>
+            <span aria-hidden="true">•</span>
+            <span>${escapeHtml(readTime)}</span>
+          </div>
+          <h5 class="card-title">${escapeHtml(card.title)}</h5>
           <p class="card-text" title="${escapeHtml(card.description || '')}">
             ${escapeHtml(card.description || "")}
           </p>
@@ -570,9 +575,9 @@ function renderPostCards(items, container) {
           <a href="${card.link}" class="stretched-link" aria-label="Open post: ${escapeHtml(card.title)}"></a>
 
           <!-- CTA pinned bottom (CSS .card-cta) -->
-          <a href="${card.link}" class="btn btn-outline-primary btn-sm card-cta">Read More →</a>
+          <span class="card-cta">Read More <span aria-hidden="true">→</span></span>
         </div>
-      </div>`;
+      </article>`;
     container.appendChild(col);
   });
 }
@@ -595,25 +600,27 @@ function renderVideoCards(items, container) {
     const col = document.createElement("div");
     col.className = "col reveal";
     col.innerHTML = `
-      <div class="card h-100 shadow-sm border-0 video-card"
+      <article class="card h-100 shadow-sm border-0 video-card"
            data-video-id="${id}"
            data-video-title="${escapeHtml(v.title)}"
            role="button" tabindex="0"
            aria-label="Play video: ${escapeHtml(v.title)}">
         <div class="thumb-wrap">
           <img src="${thumb}" alt="${escapeHtml(v.title)}" class="card-img-top" loading="lazy">
+          ${categoryPill}
           ${durationBadge}
           <button type="button" class="play-btn btn btn-primary rounded-circle" aria-hidden="true">▶</button>
         </div>
         <div class="card-body">
-          <h5 class="card-title">${escapeHtml(v.title)}</h5>
-          <h6 class="card-subtitle mb-2 text-muted d-flex align-items-center gap-2">
+          <div class="card-meta">
             <span title="${escapeHtml(v.date || '')}">${escapeHtml(ago)}</span>
-            ${categoryPill}
-          </h6>
+            <span aria-hidden="true">•</span>
+            <span>Video</span>
+          </div>
+          <h5 class="card-title">${escapeHtml(v.title)}</h5>
           <p class="card-text">${escapeHtml(v.description || "")}</p>
         </div>
-      </div>`;
+      </article>`;
     container.appendChild(col);
   });
 }
@@ -772,6 +779,11 @@ function getYouTubeId(url) {
 }
 function youTubeThumb(id, quality="hqdefault") {
   return id ? `https://img.youtube.com/vi/${id}/${quality}.jpg` : "assets/images/post1.jpg";
+}
+
+function estimateReadTime(text) {
+  const words = (text || "").trim().split(/\s+/).filter(Boolean).length;
+  return `${Math.max(1, Math.ceil(words / 180))} min read`;
 }
 
 function initReveal() {

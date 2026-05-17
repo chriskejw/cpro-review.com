@@ -520,6 +520,19 @@ function getCategories(items) {
   return Array.from(new Set(items.map(i => (i.category || "General").trim()))).sort((a, b) => a.localeCompare(b));
 }
 
+function displayCategoryLabel(category) {
+  const labels = {
+    Reviews: "Review",
+    Guides: "Guide",
+    Accessories: "Accessory",
+    Setups: "Setup",
+    Builds: "Build",
+    Videos: "Video",
+    Posts: "Post"
+  };
+  return labels[category] || category || "Review";
+}
+
 function renderCategoryChips(container, categories, targetPage) {
   if (!container) return;
   const chips = categories.map(cat => {
@@ -569,7 +582,7 @@ function renderFeaturedPosts(cards, primaryEl, secondaryEl) {
         <img src="${primary.image || 'assets/images/post1.jpg'}" alt="${escapeHtml(primary.title)}">
         <div class="featured-primary-body">
           <div class="review-card-topline">
-            <span class="badge rounded-pill bg-danger category-pill">${escapeHtml(primary.category || "Review")}</span>
+            <span class="badge rounded-pill bg-danger category-pill">${escapeHtml(displayCategoryLabel(primary.category))}</span>
             <span class="score-badge">9.4</span>
           </div>
           <h3>${escapeHtml(primary.title)}</h3>
@@ -587,7 +600,7 @@ function renderFeaturedPosts(cards, primaryEl, secondaryEl) {
         <img src="${item.image || 'assets/images/post1.jpg'}" alt="${escapeHtml(item.title)}">
         <div>
           <div class="review-card-topline">
-            <span class="badge rounded-pill bg-danger category-pill">${escapeHtml(item.category || "Review")}</span>
+            <span class="badge rounded-pill bg-danger category-pill">${escapeHtml(displayCategoryLabel(item.category))}</span>
             <span class="score-badge small-score">9.1</span>
           </div>
           <h3>${escapeHtml(item.title)}</h3>
@@ -611,7 +624,7 @@ function renderCompactPostCards(items, container) {
       <img src="${card.image || 'assets/images/post1.jpg'}" alt="${escapeHtml(card.title)}" loading="lazy">
       <div>
         <div class="card-meta">
-          <span>${escapeHtml(card.category || "Post")}</span>
+          <span>${escapeHtml(displayCategoryLabel(card.category || "Post"))}</span>
           <span aria-hidden="true">•</span>
           <span title="${escapeHtml(card.date || "")}">${escapeHtml(ago)}</span>
         </div>
@@ -631,7 +644,7 @@ function renderPostCards(items, container) {
     col.className = "col reveal";
 
     const categoryPill = card.category
-      ? `<span class="badge rounded-pill bg-danger category-pill">${escapeHtml(card.category)}</span>`
+      ? `<span class="badge rounded-pill bg-danger category-pill">${escapeHtml(displayCategoryLabel(card.category))}</span>`
       : "";
 
     const ago = timeAgoLimited(card.date);
@@ -672,7 +685,7 @@ function renderVideoCards(items, container) {
     const thumb = v.thumbnail && v.thumbnail.trim() ? v.thumbnail : youTubeThumb(id, "hqdefault");
 
     const categoryPill = v.category
-      ? `<span class="badge rounded-pill bg-danger category-pill">${escapeHtml(v.category)}</span>`
+      ? `<span class="badge rounded-pill bg-danger category-pill">${escapeHtml(displayCategoryLabel(v.category))}</span>`
       : "";
     const durationBadge = v.duration
       ? `<span class="video-duration">${escapeHtml(v.duration)}</span>`

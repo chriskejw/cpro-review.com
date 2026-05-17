@@ -154,18 +154,31 @@ function showLoadError(container, message) {
   container.innerHTML = `<div class="col-12"><p class="text-muted mb-0">${escapeHtml(message)}</p></div>`;
 }
 
-// Navbar search → posts.html?q=
-// (compact on desktop, full-width in mobile collapse; no icon-only mode)
+// Navbar search routes to the relevant library and supports both Enter and button submit.
 function wireGlobalSearchNavigation() {
   const input = document.getElementById("searchInput");
   if (!input) return;
-  input.addEventListener("keydown", (e) => {
-    if (e.key !== "Enter") return;
+
+  const form = input.closest("form");
+  const goToSearch = () => {
     const q = (input.value || "").trim();
     const page = getCurrentPage();
     const target = page === "videos.html" ? "videos.html" : "posts.html";
     const url = setQueryParam("q", q, new URL(target, window.location.href));
     window.location.href = url;
+  };
+
+  if (form) {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      goToSearch();
+    });
+  }
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter") return;
+    e.preventDefault();
+    goToSearch();
   });
 }
 
@@ -271,10 +284,7 @@ function initHome() {
             const doFilter = () => {
               const q = (searchInput.value || "").toLowerCase().trim();
               const filtered = q
-                ? ALL_CARDS.filter(c =>
-                    (c.title && c.title.toLowerCase().includes(q)) ||
-                    (c.description && c.description.toLowerCase().includes(q))
-                  ).slice(0, HOME_POSTS_LIMIT)
+                ? filterItems(ALL_CARDS, q, "all").slice(0, HOME_POSTS_LIMIT)
                 : ALL_CARDS.slice(0, HOME_POSTS_LIMIT);
               renderCompactPostCards(filtered, postGrid);
               if (noResults) noResults.style.display = filtered.length ? "none" : "block";
@@ -794,9 +804,15 @@ function filterItems(items, query, category) {
   return items.filter(i => {
     const inCat = category === "all" || (i.category || "General") === category;
     if (!query) return inCat;
-    const t = (i.title || "").toLowerCase();
-    const d = (i.description || "").toLowerCase();
-    return inCat && (t.includes(query) || d.includes(query));
+    const haystack = [
+      i.title,
+      i.description,
+      i.category,
+      i.date,
+      i.duration,
+      i.embed
+    ].filter(Boolean).join(" ").toLowerCase();
+    return inCat && haystack.includes(query);
   });
 }
 

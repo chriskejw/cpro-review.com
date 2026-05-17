@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>All Posts — CProReview</title>
+  <title>Reviews &amp; Guides - CProReview</title>
   <meta name="description" content="Browse all CProReview product reviews, tech accessories, buying guides, and optimization posts."/>
   <link rel="canonical" href="https://cpro-review.com/posts.html">
-  <meta property="og:title" content="All Posts - CProReview">
+  <meta property="og:title" content="Reviews &amp; Guides - CProReview">
   <meta property="og:description" content="Browse CProReview product reviews, accessories, and practical tech guides.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://cpro-review.com/posts.html">
@@ -34,7 +34,10 @@
   <main class="container-xxl my-5">
     <section>
       <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-3">
-        <h2 class="mb-2 mb-md-0">All Posts</h2>
+        <div>
+          <span class="eyebrow">Reviews &amp; Guides</span>
+          <h2 class="mb-2 mb-md-0">Find the right advice faster</h2>
+        </div>
 
         <!-- Category Filter -->
         <div class="d-flex align-items-center gap-2 ms-md-3">
@@ -50,17 +53,17 @@
 
       <!-- Cards grid (populated by script.js from posts.json) -->
       <div class="row row-cols-1 row-cols-md-3 g-4 card-grid" id="postsGrid"></div>
-      <p id="noResults" class="text-muted mt-2" style="display:none;">No posts found.</p>
+      <p id="noResults" class="text-muted mt-2" style="display:none;">No reviews or guides found.</p>
 
       <!-- Pagination (populated by script.js) -->
-      <nav class="mt-4" aria-label="Posts pagination">
+      <nav class="mt-4" aria-label="Reviews and guides pagination">
         <ul class="pagination justify-content-center" id="postsPagination"></ul>
       </nav>
     </section>
   </main>
 
   <!-- Back to top -->
-  <button id="backToTop" class="btn btn-primary rounded-circle" type="button" aria-label="Back to top">↑</button>
+  <button id="backToTop" class="btn btn-primary rounded-circle" type="button" aria-label="Back to top">&uarr;</button>
 
   <!-- Shared footer include (loads footer.html via script.js) -->
   <div id="footer-include"></div>

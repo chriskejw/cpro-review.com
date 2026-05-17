@@ -31,77 +31,93 @@
   <!-- Shared header -->
   <div id="header-include"></div>
 
-  <main class="container-xxl my-5">
-    <!-- Hero -->
-    <section class="text-center py-5">
-      <!-- Profile image (circular, centered) -->
-      <img src="assets/images/profile.jpg" alt="Profile" class="about-img profile">
-      <h1 class="fw-bold mb-3">About CProReview</h1>
-      <p class="lead text-muted mx-auto" style="max-width: 720px;">
-        We believe in <span class="text-danger fw-bold">honest</span> and
-        <span class="text-danger fw-bold">practical</span> product reviews. Our mission is to cut through the noise and deliver insights that actually help you decide what’s worth your time and money.
-      </p>
-    </section>
-
-    <!-- Story -->
-    <section class="row align-items-center my-5">
-      <div class="col-md-6">
-        <h2 class="fw-bold mb-3">Our Story</h2>
-        <p>
-          Founded in 2025, we are a team dedicated to testing everyday products. 
-          Our goal is to grow into a trusted source for product reviews, guides and tips worldwide.  
+  <main class="container-xxl my-5 about-page">
+    <section class="about-hero">
+      <div class="about-hero-copy">
+        <span class="eyebrow">About CProReview</span>
+        <h1>Independent tech reviews for smarter buying decisions.</h1>
+        <p class="lead text-muted">
+          CProReview helps everyday buyers choose better gadgets, accessories, and tech setups with clear testing notes, honest verdicts, and practical recommendations.
         </p>
-        <p>
-          We spend countless hours testing, comparing, and analysing products so you don’t have to. 
-          From the latest gadgets to productivity tools, we share not just what works, but why it works.
-        </p>
+        <div class="about-hero-actions">
+          <a href="posts.html" class="btn btn-danger btn-lg">Explore Reviews</a>
+          <a href="videos.html" class="btn btn-outline-primary btn-lg">Watch Videos</a>
+        </div>
       </div>
-      <div class="col-md-6 text-center">
-        <!-- Journey image (cropped uniformly) -->
-        <img src="assets/images/journey.jpg" alt="Journey" class="about-img uniform">
+
+      <div class="about-hero-card">
+        <img src="assets/images/profile.jpg" alt="CProReview testing desk" class="about-hero-img">
+        <div class="about-score-card">
+          <strong>9.4</strong>
+          <span>Review clarity score</span>
+        </div>
       </div>
     </section>
 
-    <!-- Mission -->
-    <section class="row align-items-center flex-md-row-reverse my-5">
-      <div class="col-md-6">
-        <h2 class="fw-bold mb-3">Our Mission</h2>
-        <p>
-          We aim to empower people with clear, concise, and unbiased insights.  
-          No sponsorship bias. No hidden agendas. Just straightforward reviews to help you make smarter decisions.
-        </p>
-      </div>
-      <div class="col-md-6 text-center">
-        <!-- Mission image (cropped uniformly) -->
-        <img src="assets/images/mission.jpg" alt="Mission" class="about-img uniform">
-      </div>
+    <section class="about-value-grid">
+      <article class="about-value-card">
+        <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+        <h2>Tested &amp; Verified</h2>
+        <p>We focus on real use, clear tradeoffs, and the details that matter after the hype fades.</p>
+      </article>
+      <article class="about-value-card">
+        <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>
+        <h2>Unbiased Verdicts</h2>
+        <p>Our recommendations are written to help you decide, not to make every product sound perfect.</p>
+      </article>
+      <article class="about-value-card">
+        <i class="fa-solid fa-list-check" aria-hidden="true"></i>
+        <h2>Practical Buying Guides</h2>
+        <p>We translate specs, features, and everyday performance into advice that is easy to act on.</p>
+      </article>
+      <article class="about-value-card">
+        <i class="fa-solid fa-clock" aria-hidden="true"></i>
+        <h2>Kept Current</h2>
+        <p>Reviews, guides, and videos are organized so fresh recommendations are easier to find.</p>
+      </article>
     </section>
 
-    <!-- Call to Action -->
-    <section class="text-center py-5 bg-light rounded shadow-sm cta-journey">
-      <h2 class="fw-bold mb-3">Join Our Journey</h2>
-      <p class="lead text-muted mx-auto" style="max-width: 680px;">
-        Subscribe to our newsletter for the latest reviews and insights delivered straight to your inbox.  
-        Or connect with us on <a href="https://www.youtube.com/@cpro-review" class="link-danger fw-bold" target="_blank" rel="noopener">YouTube</a>.
-      </p>
+    <section class="about-story-grid">
+      <article class="about-panel">
+        <img src="assets/images/journey.jpg" alt="Tech review workspace" class="about-img uniform">
+        <div>
+          <span class="eyebrow">Our Story</span>
+          <h2>Built for people who compare before they buy.</h2>
+          <p>
+            CProReview started in 2025 with a simple goal: make product research less noisy. We cover gadgets, accessories, IT tips, videos, and buying guides with a focus on what is useful in real life.
+          </p>
+        </div>
+      </article>
 
-      <!-- Button row -->
-      <div class="d-flex flex-column flex-sm-row justify-content-center align-items-stretch gap-3 mt-3">
-        <a href="index.html#newsletterFormIndex" class="btn btn-danger btn-lg">
-          Subscribe to Newsletter
-        </a>
+      <article class="about-panel">
+        <img src="assets/images/mission.jpg" alt="Product testing setup" class="about-img uniform">
+        <div>
+          <span class="eyebrow">Our Mission</span>
+          <h2>Clear recommendations without the fluff.</h2>
+          <p>
+            We look for strengths, weaknesses, value, and fit. The point is not to chase every trend. It is to help you spend with confidence and avoid products that do not match your needs.
+          </p>
+        </div>
+      </article>
+    </section>
 
-        <a href="https://www.youtube.com/@cpro-review" target="_blank" rel="noopener"
-           class="btn btn-danger btn-lg" aria-label="Subscribe to Channel on YouTube">
-          <i class="fa-solid fa-play me-2" aria-hidden="true"></i>
-          Subscribe to Channel
+    <section class="nl-spotlight about-cta">
+      <div>
+        <span class="eyebrow">Stay in the loop</span>
+        <h2 class="nl-title">Stay Ahead. Stay Informed.</h2>
+        <p class="nl-sub">Get the latest reviews, buying guides, and exclusive picks straight to your inbox.</p>
+      </div>
+      <div class="about-cta-actions">
+        <a href="newsletter.html" class="btn btn-danger btn-lg">Join Newsletter</a>
+        <a href="https://www.youtube.com/@cpro-review" target="_blank" rel="noopener" class="btn btn-outline-primary btn-lg" aria-label="Subscribe to CProReview on YouTube">
+          <i class="fa-solid fa-play me-2" aria-hidden="true"></i>Subscribe
         </a>
       </div>
     </section>
   </main>
 
   <!-- Back to top -->
-  <button id="backToTop" class="btn btn-primary rounded-circle" type="button" aria-label="Back to top">↑</button>
+  <button id="backToTop" class="btn btn-primary rounded-circle" type="button" aria-label="Back to top">&uarr;</button>
 
   <!-- Shared footer -->
   <div id="footer-include"></div>

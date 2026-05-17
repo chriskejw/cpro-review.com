@@ -651,7 +651,11 @@ footer a:hover{color:var(--cta-red);}
 
 /* Make brand image consistent & aligned */
 .brand-wordmark{color:var(--color-header-text)!important;font-size:1.24rem;letter-spacing:0;}
-.brand-wordmark > span{color:var(--color-primary)!important;}
+.brand-wordmark > span,
+.site-navbar .navbar-brand .brand-wordmark > span,
+.brand-inline > span{
+  color:var(--color-primary)!important;
+}
 .footer-brand{color:#fff!important;}
 
 /* Normalize heights: match search input to Subscribe pill height (34px) */

@@ -616,7 +616,6 @@ function renderFeaturedPosts(cards, primaryEl, secondaryEl) {
         <div class="featured-primary-body">
           <div class="review-card-topline">
             <span class="badge rounded-pill bg-danger category-pill">${escapeHtml(displayCategoryLabel(primary.category))}</span>
-            <span class="score-badge">9.4</span>
           </div>
           <h3>${escapeHtml(primary.title)}</h3>
           <p>${escapeHtml(primary.description || "")}</p>
@@ -634,7 +633,6 @@ function renderFeaturedPosts(cards, primaryEl, secondaryEl) {
         <div>
           <div class="review-card-topline">
             <span class="badge rounded-pill bg-danger category-pill">${escapeHtml(displayCategoryLabel(item.category))}</span>
-            <span class="score-badge small-score">9.1</span>
           </div>
           <h3>${escapeHtml(item.title)}</h3>
           <p>${escapeHtml(item.description || "")}</p>

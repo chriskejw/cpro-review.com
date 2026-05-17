@@ -1544,6 +1544,9 @@ html[data-theme="dark"] .about-panel:hover{
 .about-cta{
   align-items:center;
 }
+.nl-spotlight .eyebrow{
+  color:#fff;
+}
 @media (max-width:991.98px){
   .about-hero,
   .about-story-grid{

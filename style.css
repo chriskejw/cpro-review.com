@@ -1547,6 +1547,18 @@ html[data-theme="dark"] .about-panel:hover{
 .nl-spotlight .eyebrow{
   color:#fff;
 }
+.nl-spotlight .btn-outline-primary{
+  color:#fff!important;
+  border-color:rgba(255,255,255,.7)!important;
+  background:rgba(255,255,255,.12)!important;
+}
+.nl-spotlight .btn-outline-primary:hover,
+.nl-spotlight .btn-outline-primary:focus{
+  color:var(--color-primary)!important;
+  border-color:#fff!important;
+  background:#fff!important;
+  box-shadow:0 14px 34px rgba(0,0,0,.18);
+}
 @media (max-width:991.98px){
   .about-hero,
   .about-story-grid{

@@ -585,7 +585,15 @@ html[data-theme="dark"] .featured-secondary-card:focus{
 .nl-pill{max-width:640px;}
 .nl-pill .input-group{--h:56px;height:var(--h);}
 .nl-email{height:var(--h);border:none;border-radius:999px 0 0 999px!important;padding-inline:1.25rem;color:#1f2937;}
+.nl-spotlight .nl-email{
+  background:#fff!important;
+  color:#111827!important;
+  border-color:#fff!important;
+}
 .nl-email::placeholder{color:#6b7280;}
+.nl-spotlight .nl-email::placeholder{
+  color:#64748b!important;
+}
 .nl-submit{height:var(--h);border-radius:0 999px 999px 0!important;padding:0 1.25rem;font-weight:700;min-width:140px;}
 .nl-email:focus{outline:none;box-shadow:0 0 0 3px rgba(255,255,255,.85), 0 0 0 6px rgba(229,9,20,.6);}
 .nl-submit:focus-visible{outline:3px solid rgba(255,255,255,.85);outline-offset:2px;}

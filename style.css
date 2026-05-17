@@ -250,6 +250,7 @@ html[data-theme="dark"] .nav-search .form-control{
 .featured-primary-card,
 .featured-secondary-card{
   position:relative;
+  width:100%;
   overflow:hidden;
   border-radius:.4rem;
   border:1px solid var(--card-border);
@@ -276,6 +277,7 @@ html[data-theme="dark"] .featured-secondary-card:focus{
 }
 
 .featured-primary-card{
+  display:block;
   min-height:360px;
   height:100%;
 }
@@ -303,6 +305,8 @@ html[data-theme="dark"] .featured-secondary-card:focus{
   position:absolute;
   inset:auto 0 0;
   z-index:1;
+  width:100%;
+  box-sizing:border-box;
   padding:clamp(1rem, 2.4vw, 1.6rem);
   color:#fff;
   max-width:760px;

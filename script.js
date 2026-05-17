@@ -550,7 +550,7 @@ function renderHomeCategoryTiles(container) {
 function renderFeaturedPosts(cards, primaryEl, secondaryEl) {
   if (!primaryEl && !secondaryEl) return;
   const featured = cards.filter(c => c.featured);
-  const items = (featured.length >= 3 ? featured : cards).slice(0, 3);
+  const items = (featured.length >= 4 ? featured : cards).slice(0, 4);
   const [primary, ...secondary] = items;
 
   if (primaryEl && primary) {

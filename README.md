@@ -96,6 +96,17 @@ The site supports light and dark mode.
 - If there is no saved preference, the site respects the user's system theme.
 - Theme styles are controlled through CSS variables in `style.css`.
 
+## Brand Assets
+
+Header logos and browser icons are stored in theme-specific folders:
+
+- `assets/images/logo/light/`
+- `assets/images/logo/dark/`
+- `assets/images/favicons/light/`
+- `assets/images/favicons/dark/`
+
+Use the wordmark assets for the site header and tile assets for favicon, app icon, social preview, and structured-data logo references.
+
 ## Search
 
 The header search is global and routes to:

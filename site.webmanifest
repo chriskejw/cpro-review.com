@@ -1,0 +1,19 @@
+{
+  "name": "CProReview",
+  "short_name": "CProReview",
+  "icons": [
+    {
+      "src": "assets/images/favicons/dark/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/images/favicons/dark/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#05070A",
+  "background_color": "#05070A",
+  "display": "standalone"
+}

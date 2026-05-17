@@ -14,6 +14,7 @@ Notable changes to CProReview are tracked here.
 - Added sort controls for Reviews & Guides, Videos, and Search.
 - Added result counts for archive pages.
 - Added review verdict, guide snapshot, and buying snapshot panels to post pages.
+- Added theme-specific favicon, app icon, and logo asset folders.
 
 ### Changed
 
@@ -24,6 +25,8 @@ Notable changes to CProReview are tracked here.
 - Standardized card badges, metadata, and action labels across posts, featured cards, compact cards, videos, and search results.
 - Refined the header, search bar, filter controls, and newsletter forms for a more polished responsive UI.
 - Improved mobile layouts for hero text, newsletter forms, archive filters, and post verdict panels.
+- Replaced the text-only header brand with the provided theme-aware CProReview wordmark assets.
+- Updated social preview and structured-data logo references to the provided brand tile asset.
 - Standardized content naming:
   - plural category/filter values
   - singular badge labels

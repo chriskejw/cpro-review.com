@@ -65,6 +65,7 @@ function initThemeToggle() {
 /* BOOT */
 // =========================
 document.addEventListener("DOMContentLoaded", async () => {
+  initBackToTop();
   await loadIncludes();
   initThemeToggle();
 
@@ -90,7 +91,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   initNewsletter();
   initComments();
-  initBackToTop();
 
   setActiveNav();
   enableSmoothScroll();
@@ -1031,12 +1031,50 @@ function initReveal() {
 }
 
 function initBackToTop() {
-  const btn = document.getElementById("backToTop");
-  if (!btn) return;
-  window.addEventListener("scroll", () => {
-    btn.style.display = window.scrollY > 200 ? "flex" : "none";
-  });
-  btn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+  if (document.documentElement.dataset.backToTopReady === "1") return;
+  document.documentElement.dataset.backToTopReady = "1";
+
+  const getScrollTop = () => {
+    const scroller = document.scrollingElement || document.documentElement || document.body;
+    return Math.max(
+      window.scrollY || 0,
+      scroller?.scrollTop || 0,
+      document.documentElement.scrollTop || 0,
+      document.body.scrollTop || 0
+    );
+  };
+
+  const updateBackToTopVisibility = () => {
+    document.querySelectorAll("#backToTop").forEach(btn => {
+      btn.classList.toggle("is-visible", getScrollTop() > 300);
+    });
+  };
+
+  const scrollPageToTop = () => {
+    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    const scroller = document.scrollingElement;
+    if (scroller) scroller.scrollTop = 0;
+    updateBackToTopVisibility();
+  };
+
+  updateBackToTopVisibility();
+  window.requestAnimationFrame(updateBackToTopVisibility);
+  window.addEventListener("scroll", updateBackToTopVisibility, { passive: true });
+  document.addEventListener("scroll", updateBackToTopVisibility, { passive: true });
+  window.addEventListener("resize", updateBackToTopVisibility, { passive: true });
+  window.addEventListener("wheel", updateBackToTopVisibility, { passive: true });
+  window.addEventListener("touchmove", updateBackToTopVisibility, { passive: true });
+
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("#backToTop");
+    if (!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    scrollPageToTop();
+  }, true);
 }
 
 function setActiveNav() {

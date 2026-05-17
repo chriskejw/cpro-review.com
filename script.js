@@ -68,13 +68,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadIncludes();
   initThemeToggle();
 
-  // Enable search only on these pages
-  const allowedSearchPages = ["index.html", "posts.html", "videos.html"];
-  const path = window.location.pathname;
-  const page = path.substring(path.lastIndexOf("/") + 1) || "index.html";
-  if (allowedSearchPages.includes(page)) {
-    document.body.classList.add("search-enabled");
-  }
+  document.body.classList.add("search-enabled");
 
   // Run search-related features ONLY when search is enabled
   if (document.body.classList.contains("search-enabled")) {
@@ -92,6 +86,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initHome();
   initPostsPage();
   initVideosPage();
+  initSearchPage();
 
   initNewsletter();
   initComments();
@@ -162,9 +157,7 @@ function wireGlobalSearchNavigation() {
   const form = input.closest("form");
   const goToSearch = () => {
     const q = (input.value || "").trim();
-    const page = getCurrentPage();
-    const target = page === "videos.html" ? "videos.html" : "posts.html";
-    const url = setQueryParam("q", q, new URL(target, window.location.href));
+    const url = setQueryParam("q", q, new URL("search.html", window.location.href));
     window.location.href = url;
   };
 
@@ -379,15 +372,6 @@ function initPostsPage() {
         applyAndRender();
       });
 
-      if (searchInput) {
-        searchInput.addEventListener("input", () => {
-          POSTS_STATE.page = 1;
-          const newUrl = setQueryParam("q", searchInput.value.trim());
-          window.history.replaceState({}, "", newUrl);
-          applyAndRender();
-        }, { passive: true });
-      }
-
       applyAndRender();
     })
     .catch(err => {
@@ -468,15 +452,6 @@ function initVideosPage() {
         applyAndRender();
       });
 
-      if (searchInput) {
-        searchInput.addEventListener("input", () => {
-          VIDEOS_STATE.page = 1;
-          const newUrl = setQueryParam("q", searchInput.value.trim());
-          window.history.replaceState({}, "", newUrl);
-          applyAndRender();
-        }, { passive: true });
-      }
-
       applyAndRender();
       setupVideoModal();
     })
@@ -511,6 +486,64 @@ function renderVideosPage(grid, pager, items, noResults) {
     renderVideosPage(grid, pager, items, noResults);
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
+}
+
+function initSearchPage() {
+  const postsGrid = document.getElementById("searchPostsGrid");
+  const videosGrid = document.getElementById("searchVideosGrid");
+  const postsSection = document.getElementById("searchPostsSection");
+  const videosSection = document.getElementById("searchVideosSection");
+  const summary = document.getElementById("searchSummary");
+  const noResults = document.getElementById("searchNoResults");
+  const searchInput = document.getElementById("searchInput");
+  if (!postsGrid || !videosGrid || !postsSection || !videosSection) return;
+
+  const seedQ = getQueryParam("q");
+  if (searchInput) searchInput.value = seedQ || "";
+
+  Promise.all([fetchJson("posts.json"), fetchJson("videos.json")])
+    .then(([posts, videos]) => {
+      sortByNewest(posts);
+      sortByNewest(videos);
+
+      const render = () => {
+        const rawQuery = (searchInput?.value || seedQ || "").trim();
+        const q = rawQuery.toLowerCase();
+        const postMatches = q ? filterItems(posts, q, "all") : [];
+        const videoMatches = q ? filterItems(videos, q, "all") : [];
+        const total = postMatches.length + videoMatches.length;
+
+        if (summary) {
+          summary.textContent = q
+            ? `${total} result${total === 1 ? "" : "s"} for "${rawQuery}".`
+            : "Use the search bar above to look across CProReview.";
+        }
+        if (noResults) noResults.style.display = q && !total ? "block" : "none";
+
+        postsSection.style.display = postMatches.length ? "" : "none";
+        videosSection.style.display = videoMatches.length ? "" : "none";
+        renderPostCards(postMatches, postsGrid);
+        renderVideoCards(videoMatches, videosGrid);
+        setupVideoModal();
+        initReveal();
+      };
+
+      if (searchInput) {
+        searchInput.addEventListener("input", () => {
+          const newUrl = setQueryParam("q", searchInput.value.trim());
+          window.history.replaceState({}, "", newUrl);
+          render();
+        }, { passive: true });
+      }
+
+      render();
+    })
+    .catch(err => {
+      console.error("search data error:", err);
+      if (summary) summary.textContent = "Search results could not be loaded right now.";
+      postsSection.style.display = "none";
+      videosSection.style.display = "none";
+    });
 }
 
 // =========================

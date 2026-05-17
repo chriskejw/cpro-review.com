@@ -1465,6 +1465,39 @@ html[data-theme="dark"] .card:hover{
 }
 
 /* =========================================================
+   Search page
+   ========================================================= */
+.search-page{
+  display:grid;
+  gap:2rem;
+}
+.search-hero{
+  padding:clamp(1.5rem,4vw,2.5rem);
+  border:1px solid var(--color-border);
+  border-radius:22px;
+  background:
+    radial-gradient(circle at 82% 20%, rgba(239,35,60,.16), transparent 32%),
+    var(--color-surface);
+  box-shadow:var(--shadow-soft);
+}
+.search-hero h1{
+  max-width:720px;
+  margin:.45rem 0 .65rem;
+  font-size:clamp(2rem,4vw,3.4rem);
+  line-height:1;
+  font-weight:850;
+}
+.search-result-section{
+  margin-top:0;
+}
+.search-empty{
+  padding:1rem 1.15rem;
+  border:1px solid var(--color-border);
+  border-radius:16px;
+  background:var(--color-surface);
+}
+
+/* =========================================================
    About page premium layout
    ========================================================= */
 .about-page{

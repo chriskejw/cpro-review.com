@@ -555,7 +555,7 @@ function renderFeaturedPosts(cards, primaryEl, secondaryEl) {
 
   if (primaryEl && primary) {
     primaryEl.innerHTML = `
-      <article class="featured-primary-card">
+      <a class="featured-primary-card card-link" href="${primary.link}" aria-label="Read review: ${escapeHtml(primary.title)}">
         <img src="${primary.image || 'assets/images/post1.jpg'}" alt="${escapeHtml(primary.title)}">
         <div class="featured-primary-body">
           <div class="review-card-topline">
@@ -565,15 +565,15 @@ function renderFeaturedPosts(cards, primaryEl, secondaryEl) {
           <h3>${escapeHtml(primary.title)}</h3>
           <p>${escapeHtml(primary.description || "")}</p>
           <div class="stars" aria-label="Rating 4.5 out of 5">★★★★★</div>
-          <a class="btn btn-primary btn-sm" href="${primary.link}">Read Review</a>
+          <span class="card-action">Read Review <span aria-hidden="true">→</span></span>
         </div>
-      </article>
+      </a>
     `;
   }
 
   if (secondaryEl) {
     secondaryEl.innerHTML = secondary.map(item => `
-      <article class="featured-secondary-card">
+      <a class="featured-secondary-card card-link" href="${item.link}" aria-label="Read review: ${escapeHtml(item.title)}">
         <img src="${item.image || 'assets/images/post1.jpg'}" alt="${escapeHtml(item.title)}">
         <div>
           <div class="review-card-topline">
@@ -582,9 +582,9 @@ function renderFeaturedPosts(cards, primaryEl, secondaryEl) {
           </div>
           <h3>${escapeHtml(item.title)}</h3>
           <p>${escapeHtml(item.description || "")}</p>
-          <a href="${item.link}">Read Review</a>
+          <span class="card-action">Read Review <span aria-hidden="true">→</span></span>
         </div>
-      </article>
+      </a>
     `).join("");
   }
 }
@@ -592,8 +592,10 @@ function renderFeaturedPosts(cards, primaryEl, secondaryEl) {
 function renderCompactPostCards(items, container) {
   container.innerHTML = "";
   items.forEach(card => {
-    const item = document.createElement("article");
+    const item = document.createElement("a");
     item.className = "compact-post-card reveal";
+    item.href = card.link;
+    item.setAttribute("aria-label", `Read post: ${card.title || "Post"}`);
     const ago = timeAgoLimited(card.date);
     item.innerHTML = `
       <img src="${card.image || 'assets/images/post1.jpg'}" alt="${escapeHtml(card.title)}" loading="lazy">
@@ -605,7 +607,7 @@ function renderCompactPostCards(items, container) {
         </div>
         <h3>${escapeHtml(card.title)}</h3>
         <p>${escapeHtml(card.description || "")}</p>
-        <a href="${card.link}" aria-label="Read post: ${escapeHtml(card.title)}">Read Post</a>
+        <span class="card-action">Read Post <span aria-hidden="true">→</span></span>
       </div>
     `;
     container.appendChild(item);

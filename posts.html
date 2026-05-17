@@ -39,17 +39,28 @@
           <h2 class="mb-2 mb-md-0">Find the right advice faster</h2>
         </div>
 
-        <!-- Category Filter -->
-        <div class="d-flex align-items-center gap-2 ms-md-3">
-          <label for="categoryFilter" class="text-muted small mb-0">Category</label>
-          <select id="categoryFilter" class="form-select form-select-sm" style="min-width: 180px;">
-            <option value="all">All categories</option>
-            <!-- options populated by script.js -->
-          </select>
+        <div class="filter-toolbar ms-md-3" aria-label="Reviews and guides controls">
+          <div class="filter-control">
+            <label for="categoryFilter" class="text-muted small mb-0">Category</label>
+            <select id="categoryFilter" class="form-select form-select-sm" style="min-width: 180px;">
+              <option value="all">All categories</option>
+              <!-- options populated by script.js -->
+            </select>
+          </div>
+          <div class="filter-control">
+            <label for="postsSort" class="text-muted small mb-0">Sort</label>
+            <select id="postsSort" class="form-select form-select-sm" style="min-width: 150px;">
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="az">A-Z</option>
+              <option value="za">Z-A</option>
+            </select>
+          </div>
         </div>
       </div>
 
       <div class="category-chip-row mb-4" id="postCategoryChips"></div>
+      <p class="result-count" id="postsCount" aria-live="polite"></p>
 
       <!-- Cards grid (populated by script.js from posts.json) -->
       <div class="row row-cols-1 row-cols-md-3 g-4 card-grid" id="postsGrid"></div>

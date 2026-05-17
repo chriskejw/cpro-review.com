@@ -35,17 +35,28 @@
       <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-3">
         <h2 class="mb-2 mb-md-0">All Videos</h2>
 
-        <!-- Category Filter -->
-        <div class="d-flex align-items-center gap-2 ms-md-3">
-          <label for="videoCategoryFilter" class="text-muted small mb-0">Category</label>
-          <select id="videoCategoryFilter" class="form-select form-select-sm" style="min-width: 180px;">
-            <option value="all">All categories</option>
-            <!-- options populated by script.js -->
-          </select>
+        <div class="filter-toolbar ms-md-3" aria-label="Video controls">
+          <div class="filter-control">
+            <label for="videoCategoryFilter" class="text-muted small mb-0">Category</label>
+            <select id="videoCategoryFilter" class="form-select form-select-sm" style="min-width: 180px;">
+              <option value="all">All categories</option>
+              <!-- options populated by script.js -->
+            </select>
+          </div>
+          <div class="filter-control">
+            <label for="videosSort" class="text-muted small mb-0">Sort</label>
+            <select id="videosSort" class="form-select form-select-sm" style="min-width: 150px;">
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="az">A-Z</option>
+              <option value="za">Z-A</option>
+            </select>
+          </div>
         </div>
       </div>
 
       <div class="category-chip-row mb-4" id="videoCategoryChips"></div>
+      <p class="result-count" id="videosCount" aria-live="polite"></p>
 
       <!-- Videos grid (thumbnails; modal player on click) -->
       <div class="row row-cols-1 row-cols-md-3 g-4" id="videosGrid"></div>

@@ -106,6 +106,22 @@ search.html?q=search-term
 
 The search page reads both `posts.json` and `videos.json`.
 
+Archive and search result pages support sorting by:
+
+- newest
+- oldest
+- A-Z
+- Z-A
+
+The Reviews & Guides and Videos archives also show live result counts.
+
+## UI Notes
+
+- Article, video, featured, and compact cards are clickable as whole cards where appropriate.
+- Small card badges use singular labels and sit on the image thumbnail.
+- Review pages use visual verdict summaries; guide and buying-guide pages use snapshot summaries.
+- Header controls, filter controls, newsletter forms, and mobile layouts are styled in `style.css`.
+
 ## Deployment
 
 Pushing to `main` updates the GitHub Pages site. The custom domain is:
@@ -122,3 +138,12 @@ See [docs/deployment.md](docs/deployment.md) for deployment checks.
 - [CONTRIBUTING.md](CONTRIBUTING.md)
 - [docs/content-guide.md](docs/content-guide.md)
 - [docs/deployment.md](docs/deployment.md)
+
+## Roadmap
+
+Later improvements worth doing as separate focused passes:
+
+- Curate or replace the placeholder-heavy image set with more consistent tech/product visuals.
+- Improve related content logic so post pages prioritize same-category and same-content-type recommendations.
+- Refactor category metadata into a single shared map for labels, CTAs, icons, and route behavior.
+- Add structured data such as Article, VideoObject, and review schema only when the content model and ratings are stable.

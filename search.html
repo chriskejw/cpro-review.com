@@ -35,7 +35,20 @@
     <section class="search-hero">
       <span class="eyebrow">Search</span>
       <h1>Find reviews, guides, and videos.</h1>
-      <p class="text-muted mb-0" id="searchSummary">Use the search bar above to look across CProReview.</p>
+      <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3">
+        <p class="text-muted mb-0" id="searchSummary">Use the search bar above to look across CProReview.</p>
+        <div class="filter-toolbar search-sort-toolbar" aria-label="Search controls">
+          <div class="filter-control">
+          <label for="searchSort" class="text-muted small mb-0">Sort</label>
+          <select id="searchSort" class="form-select form-select-sm" style="min-width: 150px;">
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="az">A-Z</option>
+            <option value="za">Z-A</option>
+          </select>
+          </div>
+        </div>
+      </div>
     </section>
 
     <p id="searchNoResults" class="text-muted search-empty" style="display:none;">No results found. Try a product type, category, or topic.</p>

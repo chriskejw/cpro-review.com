@@ -19,8 +19,8 @@ const THEME_KEY = "cproreview-theme";
 let ALL_CARDS = [];  // posts
 let ALL_VIDS  = [];  // videos
 
-let POSTS_STATE  = { page: 1, category: "all",  query: "", categories: [] };
-let VIDEOS_STATE = { page: 1, category: "all",  query: "", categories: [] };
+let POSTS_STATE  = { page: 1, category: "all",  query: "", categories: [], sort: "newest" };
+let VIDEOS_STATE = { page: 1, category: "all",  query: "", categories: [], sort: "newest" };
 
 applyInitialTheme();
 
@@ -190,6 +190,20 @@ function sortByNewest(arr, dateKey = "date") {
   return arr;
 }
 
+function sortItems(items, sort = "newest") {
+  const sorted = [...items];
+  if (sort === "oldest") {
+    return sorted.sort((a, b) => parseDateSafe(a.date) - parseDateSafe(b.date));
+  }
+  if (sort === "az") {
+    return sorted.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
+  }
+  if (sort === "za") {
+    return sorted.sort((a, b) => (b.title || "").localeCompare(a.title || ""));
+  }
+  return sorted.sort((a, b) => parseDateSafe(b.date) - parseDateSafe(a.date));
+}
+
 /**
  * Time-ago with explicit ranges:
  * minutes (1–59), hours (1–23), days (1–13), weeks (2–3), months (1–11), years (1–99)
@@ -335,6 +349,7 @@ function initPostsPage() {
   const searchInput = document.getElementById("searchInput");
   const noResults   = document.getElementById("noResults");
   const catSelect   = document.getElementById("categoryFilter");
+  const sortSelect  = document.getElementById("postsSort");
   const pager       = document.getElementById("postsPagination");
   if (!grid || !pager || !catSelect) return;
 
@@ -357,10 +372,15 @@ function initPostsPage() {
         POSTS_STATE.category = seedCategory;
         catSelect.value = seedCategory;
       }
+      const seedSort = getQueryParam("sort");
+      if (sortSelect && ["newest", "oldest", "az", "za"].includes(seedSort)) {
+        POSTS_STATE.sort = seedSort;
+        sortSelect.value = seedSort;
+      }
 
       const applyAndRender = () => {
         POSTS_STATE.query = (searchInput?.value || "").toLowerCase().trim();
-        const filtered = filterItems(cards, POSTS_STATE.query, POSTS_STATE.category);
+        const filtered = sortItems(filterItems(cards, POSTS_STATE.query, POSTS_STATE.category), POSTS_STATE.sort);
         renderPostsPage(grid, pager, filtered, noResults);
       };
 
@@ -371,6 +391,16 @@ function initPostsPage() {
         window.history.replaceState({}, "", newUrl);
         applyAndRender();
       });
+
+      if (sortSelect) {
+        sortSelect.addEventListener("change", (e) => {
+          POSTS_STATE.sort = e.target.value;
+          POSTS_STATE.page = 1;
+          const newUrl = setQueryParam("sort", POSTS_STATE.sort === "newest" ? "" : POSTS_STATE.sort);
+          window.history.replaceState({}, "", newUrl);
+          applyAndRender();
+        });
+      }
 
       applyAndRender();
     })
@@ -385,6 +415,11 @@ function renderPostsPage(grid, pager, items, noResults) {
   const total = items.length;
   const pages = Math.max(1, Math.ceil(total / POSTS_PER_PAGE));
   const current = Math.min(POSTS_STATE.page, pages);
+  const countEl = document.getElementById("postsCount");
+  if (countEl) {
+    const noun = total === 1 ? "article" : "articles";
+    countEl.textContent = `${total} ${noun}`;
+  }
 
   const start = (current - 1) * POSTS_PER_PAGE;
   const end   = start + POSTS_PER_PAGE;
@@ -415,6 +450,7 @@ function initVideosPage() {
   const searchInput = document.getElementById("searchInput");
   const noResults   = document.getElementById("noVideoResults");
   const catSelect   = document.getElementById("videoCategoryFilter");
+  const sortSelect  = document.getElementById("videosSort");
   const pager       = document.getElementById("videosPagination");
   if (!grid || !pager || !catSelect) return;
 
@@ -437,10 +473,15 @@ function initVideosPage() {
         VIDEOS_STATE.category = seedCategory;
         catSelect.value = seedCategory;
       }
+      const seedSort = getQueryParam("sort");
+      if (sortSelect && ["newest", "oldest", "az", "za"].includes(seedSort)) {
+        VIDEOS_STATE.sort = seedSort;
+        sortSelect.value = seedSort;
+      }
 
       const applyAndRender = () => {
         VIDEOS_STATE.query = (searchInput?.value || "").toLowerCase().trim();
-        const filtered = filterItems(videos, VIDEOS_STATE.query, VIDEOS_STATE.category);
+        const filtered = sortItems(filterItems(videos, VIDEOS_STATE.query, VIDEOS_STATE.category), VIDEOS_STATE.sort);
         renderVideosPage(grid, pager, filtered, noResults);
       };
 
@@ -451,6 +492,16 @@ function initVideosPage() {
         window.history.replaceState({}, "", newUrl);
         applyAndRender();
       });
+
+      if (sortSelect) {
+        sortSelect.addEventListener("change", (e) => {
+          VIDEOS_STATE.sort = e.target.value;
+          VIDEOS_STATE.page = 1;
+          const newUrl = setQueryParam("sort", VIDEOS_STATE.sort === "newest" ? "" : VIDEOS_STATE.sort);
+          window.history.replaceState({}, "", newUrl);
+          applyAndRender();
+        });
+      }
 
       applyAndRender();
       setupVideoModal();
@@ -466,6 +517,11 @@ function renderVideosPage(grid, pager, items, noResults) {
   const total = items.length;
   const pages = Math.max(1, Math.ceil(total / VIDEOS_PER_PAGE));
   const current = Math.min(VIDEOS_STATE.page, pages);
+  const countEl = document.getElementById("videosCount");
+  if (countEl) {
+    const noun = total === 1 ? "video" : "videos";
+    countEl.textContent = `${total} ${noun}`;
+  }
 
   const start = (current - 1) * VIDEOS_PER_PAGE;
   const end   = start + VIDEOS_PER_PAGE;
@@ -496,9 +552,16 @@ function initSearchPage() {
   const summary = document.getElementById("searchSummary");
   const noResults = document.getElementById("searchNoResults");
   const searchInput = document.getElementById("searchInput");
+  const sortSelect = document.getElementById("searchSort");
   if (!postsGrid || !videosGrid || !postsSection || !videosSection) return;
 
   const seedQ = getQueryParam("q");
+  let searchSort = "newest";
+  const seedSort = getQueryParam("sort");
+  if (sortSelect && ["newest", "oldest", "az", "za"].includes(seedSort)) {
+    searchSort = seedSort;
+    sortSelect.value = seedSort;
+  }
   if (searchInput) searchInput.value = seedQ || "";
 
   Promise.all([fetchJson("posts.json"), fetchJson("videos.json")])
@@ -509,8 +572,8 @@ function initSearchPage() {
       const render = () => {
         const rawQuery = (searchInput?.value || seedQ || "").trim();
         const q = rawQuery.toLowerCase();
-        const postMatches = q ? filterItems(posts, q, "all") : [];
-        const videoMatches = q ? filterItems(videos, q, "all") : [];
+        const postMatches = q ? sortItems(filterItems(posts, q, "all"), searchSort) : [];
+        const videoMatches = q ? sortItems(filterItems(videos, q, "all"), searchSort) : [];
         const total = postMatches.length + videoMatches.length;
 
         if (summary) {
@@ -534,6 +597,15 @@ function initSearchPage() {
           window.history.replaceState({}, "", newUrl);
           render();
         }, { passive: true });
+      }
+
+      if (sortSelect) {
+        sortSelect.addEventListener("change", (e) => {
+          searchSort = e.target.value;
+          const newUrl = setQueryParam("sort", searchSort === "newest" ? "" : searchSort);
+          window.history.replaceState({}, "", newUrl);
+          render();
+        });
       }
 
       render();
@@ -564,6 +636,17 @@ function displayCategoryLabel(category) {
     Posts: "Post"
   };
   return labels[category] || category || "Review";
+}
+
+function contentActionLabel(category) {
+  const labels = {
+    Reviews: "Read Review",
+    Guides: "Read Guide",
+    Accessories: "View Picks",
+    Setups: "View Setup",
+    Builds: "View Build"
+  };
+  return labels[category] || "Read More";
 }
 
 function renderCategoryChips(container, categories, targetPage) {
@@ -610,8 +693,9 @@ function renderFeaturedPosts(cards, primaryEl, secondaryEl) {
   const [primary, ...secondary] = items;
 
   if (primaryEl && primary) {
+    const primaryAction = contentActionLabel(primary.category);
     primaryEl.innerHTML = `
-      <a class="featured-primary-card card-link" href="${primary.link}" aria-label="Read review: ${escapeHtml(primary.title)}">
+      <a class="featured-primary-card card-link" href="${primary.link}" aria-label="${escapeHtml(primaryAction)}: ${escapeHtml(primary.title)}">
         <img src="${primary.image || 'assets/images/post1.jpg'}" alt="${escapeHtml(primary.title)}">
         <div class="featured-primary-body">
           <div class="review-card-topline">
@@ -619,27 +703,29 @@ function renderFeaturedPosts(cards, primaryEl, secondaryEl) {
           </div>
           <h3>${escapeHtml(primary.title)}</h3>
           <p>${escapeHtml(primary.description || "")}</p>
-          <div class="stars" aria-label="Rating 4.5 out of 5">★★★★★</div>
-          <span class="card-action">Read Review <span aria-hidden="true">→</span></span>
+          <span class="card-action">${escapeHtml(primaryAction)} <span aria-hidden="true">&rarr;</span></span>
         </div>
       </a>
     `;
   }
 
   if (secondaryEl) {
-    secondaryEl.innerHTML = secondary.map(item => `
-      <a class="featured-secondary-card card-link" href="${item.link}" aria-label="Read review: ${escapeHtml(item.title)}">
-        <img src="${item.image || 'assets/images/post1.jpg'}" alt="${escapeHtml(item.title)}">
+    secondaryEl.innerHTML = secondary.map(item => {
+      const action = contentActionLabel(item.category);
+      return `
+      <a class="featured-secondary-card card-link" href="${item.link}" aria-label="${escapeHtml(action)}: ${escapeHtml(item.title)}">
+        <span class="featured-secondary-media">
+          <img src="${item.image || 'assets/images/post1.jpg'}" alt="${escapeHtml(item.title)}">
+          <span class="badge rounded-pill bg-danger category-pill">${escapeHtml(displayCategoryLabel(item.category))}</span>
+        </span>
         <div>
-          <div class="review-card-topline">
-            <span class="badge rounded-pill bg-danger category-pill">${escapeHtml(displayCategoryLabel(item.category))}</span>
-          </div>
           <h3>${escapeHtml(item.title)}</h3>
           <p>${escapeHtml(item.description || "")}</p>
-          <span class="card-action">Read Review <span aria-hidden="true">→</span></span>
+          <span class="card-action">${escapeHtml(action)} <span aria-hidden="true">&rarr;</span></span>
         </div>
       </a>
-    `).join("");
+    `;
+    }).join("");
   }
 }
 
@@ -649,19 +735,27 @@ function renderCompactPostCards(items, container) {
     const item = document.createElement("a");
     item.className = "compact-post-card reveal";
     item.href = card.link;
-    item.setAttribute("aria-label", `Read post: ${card.title || "Post"}`);
+    const action = contentActionLabel(card.category);
+    item.setAttribute("aria-label", `${action}: ${card.title || "Post"}`);
     const ago = timeAgoLimited(card.date);
+    const readTime = card.readTime || estimateReadTime(`${card.title || ""} ${card.description || ""}`);
+    const categoryPill = card.category
+      ? `<span class="badge rounded-pill bg-danger category-pill">${escapeHtml(displayCategoryLabel(card.category))}</span>`
+      : "";
     item.innerHTML = `
-      <img src="${card.image || 'assets/images/post1.jpg'}" alt="${escapeHtml(card.title)}" loading="lazy">
+      <span class="compact-media">
+        <img src="${card.image || 'assets/images/post1.jpg'}" alt="${escapeHtml(card.title)}" loading="lazy">
+        ${categoryPill}
+      </span>
       <div>
         <div class="card-meta">
-          <span>${escapeHtml(displayCategoryLabel(card.category || "Post"))}</span>
-          <span aria-hidden="true">•</span>
           <span title="${escapeHtml(card.date || "")}">${escapeHtml(ago)}</span>
+          <span aria-hidden="true">&bull;</span>
+          <span>${escapeHtml(readTime)}</span>
         </div>
         <h3>${escapeHtml(card.title)}</h3>
         <p>${escapeHtml(card.description || "")}</p>
-        <span class="card-action">Read Post <span aria-hidden="true">→</span></span>
+        <span class="card-action">${escapeHtml(action)} <span aria-hidden="true">&rarr;</span></span>
       </div>
     `;
     container.appendChild(item);
@@ -680,6 +774,7 @@ function renderPostCards(items, container) {
 
     const ago = timeAgoLimited(card.date);
     const readTime = card.readTime || estimateReadTime(`${card.title || ""} ${card.description || ""}`);
+    const action = contentActionLabel(card.category);
 
     col.innerHTML = `
       <article class="card h-100 shadow-sm border-0 clickable-card post-card-modern">
@@ -690,7 +785,7 @@ function renderPostCards(items, container) {
         <div class="card-body">
           <div class="card-meta">
             <span title="${escapeHtml(card.date || '')}">${escapeHtml(ago)}</span>
-            <span aria-hidden="true">•</span>
+            <span aria-hidden="true">&bull;</span>
             <span>${escapeHtml(readTime)}</span>
           </div>
           <h5 class="card-title">${escapeHtml(card.title)}</h5>
@@ -699,10 +794,10 @@ function renderPostCards(items, container) {
           </p>
 
           <!-- Full-card link -->
-          <a href="${card.link}" class="stretched-link" aria-label="Open post: ${escapeHtml(card.title)}"></a>
+          <a href="${card.link}" class="stretched-link" aria-label="${escapeHtml(action)}: ${escapeHtml(card.title)}"></a>
 
           <!-- CTA pinned bottom (CSS .card-cta) -->
-          <span class="card-cta">Read More <span aria-hidden="true">→</span></span>
+          <span class="card-cta">${escapeHtml(action)} <span aria-hidden="true">&rarr;</span></span>
         </div>
       </article>`;
     container.appendChild(col);
@@ -743,11 +838,10 @@ function renderVideoCards(items, container) {
         <div class="card-body">
           <div class="card-meta">
             <span title="${escapeHtml(v.date || '')}">${escapeHtml(ago)}</span>
-            <span aria-hidden="true">•</span>
-            <span>Video</span>
           </div>
           <h5 class="card-title">${escapeHtml(v.title)}</h5>
           <p class="card-text">${escapeHtml(v.description || "")}</p>
+          <span class="card-cta video-cta">Watch Video <span aria-hidden="true">&rarr;</span></span>
         </div>
       </article>`;
     container.appendChild(col);
@@ -756,7 +850,7 @@ function renderVideoCards(items, container) {
 
 // Reusable modal hookup for home (#videoGrid) and videos page (#videosGrid)
 function setupVideoModal() {
-  const grids = ["videosGrid", "videoGrid"]
+  const grids = ["videosGrid", "videoGrid", "searchVideosGrid"]
     .map(id => document.getElementById(id))
     .filter(Boolean);
 
@@ -775,6 +869,8 @@ function setupVideoModal() {
   };
 
   grids.forEach(grid => {
+    if (grid.dataset.videoModalReady === "1") return;
+    grid.dataset.videoModalReady = "1";
     grid.addEventListener("click", (e) => {
       const card = e.target.closest("[data-video-id]");
       if (card) openFromCard(card);
@@ -1138,7 +1234,7 @@ function initRelatedPosts() {
       container.innerHTML = `
         <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-3">
           <h2 class="mb-2 mb-md-0">Related Posts</h2>
-          <a href="posts.html" class="btn btn-outline-primary btn-sm">All Posts</a>
+          <a href="posts.html" class="section-link">View all reviews <span aria-hidden="true">&rarr;</span></a>
         </div>
         <div class="row row-cols-1 row-cols-md-3 g-4 card-grid related-grid"></div>
       `;

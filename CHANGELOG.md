@@ -11,6 +11,9 @@ Notable changes to CProReview are tracked here.
 - Added dark and light theme support with saved user preference.
 - Added SEO files including `robots.txt` and `sitemap.xml`.
 - Added documentation for project maintenance.
+- Added sort controls for Reviews & Guides, Videos, and Search.
+- Added result counts for archive pages.
+- Added review verdict, guide snapshot, and buying snapshot panels to post pages.
 
 ### Changed
 
@@ -18,6 +21,9 @@ Notable changes to CProReview are tracked here.
 - Redesigned the homepage with a premium tech-review style.
 - Redesigned the About page with a stronger hero, value cards, story panels, and CTA section.
 - Improved card interactions so cards are clickable as a whole where appropriate.
+- Standardized card badges, metadata, and action labels across posts, featured cards, compact cards, videos, and search results.
+- Refined the header, search bar, filter controls, and newsletter forms for a more polished responsive UI.
+- Improved mobile layouts for hero text, newsletter forms, archive filters, and post verdict panels.
 - Standardized content naming:
   - plural category/filter values
   - singular badge labels

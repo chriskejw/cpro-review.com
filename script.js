@@ -1,7 +1,7 @@
 // =========================
 // CONFIG (production keys/ids)
 // =========================
-const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyYnILDqcTvOiwVhZ9i9mO9ayZqtVW3K4CxN4KbFIZWRDejuxCutvyIUup8Ux2_jxA_/exec";
+const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby0EZ5ikvXUlHwYbkrI78kLSth8iPKwzmzPNeduv-QW5qMmnFkjIogtDQmJYe7RD8fG/exec";
 const EMAILJS_PUBLIC_KEY     = "Ow9sGUE6hSO-EpF_T";
 const EMAILJS_SERVICE_ID     = "service_8fe6yij";
 const EMAILJS_TEMPLATE_ID    = "template_wxvjwg9";

@@ -1280,9 +1280,16 @@ function initNewsletter() {
       body
     }, NEWSLETTER_TIMEOUT_MS);
 
-    if (!window.emailjs) throw new Error("EmailJS is not available");
-    await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { name, email, source });
+    // Primary submit succeeded; treat this as success for UX.
     setMessage(msgEl, "You're in! Check your inbox for the welcome email.");
+
+    // Secondary email automation should never block signup success.
+    if (!window.emailjs) return;
+    try {
+      await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { name, email, source });
+    } catch (emailErr) {
+      console.warn("EmailJS send failed after successful signup:", emailErr);
+    }
   };
 
   const wireNewsletterForm = async (form, msgId, source) => {

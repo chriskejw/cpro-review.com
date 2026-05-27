@@ -18,6 +18,8 @@ const NEWSLETTER_MIN_FILL_MS = 2500;
 const NEWSLETTER_COOLDOWN_MS = 45000;
 const NEWSLETTER_TIMEOUT_MS = 12000;
 const NEWSLETTER_RATE_KEY = "cproreview-newsletter-last-submit";
+const TURNSTILE_SITE_KEY = "";
+const TURNSTILE_SCRIPT_URL = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
 
 // State
 let ALL_CARDS = [];  // posts
@@ -1124,6 +1126,78 @@ function initNewsletter() {
     msgEl.textContent = message;
   };
 
+  const captchaEnabled = () => !!TURNSTILE_SITE_KEY.trim();
+  const turnstileWidgets = new WeakMap();
+  let turnstileLoadPromise = null;
+
+  const loadTurnstile = () => {
+    if (!captchaEnabled()) return Promise.resolve(false);
+    if (window.turnstile && typeof window.turnstile.render === "function") return Promise.resolve(true);
+    if (turnstileLoadPromise) return turnstileLoadPromise;
+
+    turnstileLoadPromise = new Promise((resolve) => {
+      const existing = document.querySelector(`script[src^="${TURNSTILE_SCRIPT_URL.split("?")[0]}"]`);
+      if (existing) {
+        let tries = 0;
+        const timer = setInterval(() => {
+          tries += 1;
+          if (window.turnstile && typeof window.turnstile.render === "function") {
+            clearInterval(timer);
+            resolve(true);
+          } else if (tries > 20) {
+            clearInterval(timer);
+            resolve(false);
+          }
+        }, 250);
+        return;
+      }
+
+      const s = document.createElement("script");
+      s.src = TURNSTILE_SCRIPT_URL;
+      s.async = true;
+      s.defer = true;
+      s.onload = () => resolve(!!(window.turnstile && typeof window.turnstile.render === "function"));
+      s.onerror = () => resolve(false);
+      document.head.appendChild(s);
+    });
+
+    return turnstileLoadPromise;
+  };
+
+  const getCaptchaToken = (form) => form?.dataset?.turnstileToken || "";
+
+  const resetCaptcha = (form) => {
+    if (!captchaEnabled() || !form) return;
+    form.dataset.turnstileToken = "";
+    const widgetId = turnstileWidgets.get(form);
+    if (window.turnstile && typeof window.turnstile.reset === "function" && widgetId !== undefined) {
+      try { window.turnstile.reset(widgetId); } catch {}
+    }
+  };
+
+  const renderCaptcha = async (form, msgEl) => {
+    if (!captchaEnabled() || !form) return true;
+    const slot = form.querySelector("[data-turnstile-container]");
+    if (!slot) return true;
+
+    const ready = await loadTurnstile();
+    if (!ready || !window.turnstile || typeof window.turnstile.render !== "function") {
+      setMessage(msgEl, "Spam check is unavailable right now. Please try again shortly.", "error");
+      return false;
+    }
+    if (turnstileWidgets.has(form)) return true;
+
+    const widgetId = window.turnstile.render(slot, {
+      sitekey: TURNSTILE_SITE_KEY.trim(),
+      theme: "auto",
+      callback: (token) => { form.dataset.turnstileToken = token || ""; },
+      "expired-callback": () => { form.dataset.turnstileToken = ""; },
+      "error-callback": () => { form.dataset.turnstileToken = ""; }
+    });
+    turnstileWidgets.set(form, widgetId);
+    return true;
+  };
+
   const ensureHoneypot = (form) => {
     if (!form || form.querySelector("[name='website']")) return;
     const trap = document.createElement("div");
@@ -1171,6 +1245,11 @@ function initNewsletter() {
       return false;
     }
 
+    if (captchaEnabled() && !getCaptchaToken(form)) {
+      setMessage(msgEl, "Please complete the spam check before submitting.", "error");
+      return false;
+    }
+
     return true;
   };
 
@@ -1184,11 +1263,12 @@ function initNewsletter() {
     }
   };
 
-  const send = async (name, email, msgEl, source) => {
+  const send = async (name, email, msgEl, source, captchaToken) => {
     const body = [
       `email=${encodeURIComponent(email)}`,
       `name=${encodeURIComponent(name)}`,
       `source=${encodeURIComponent(source)}`,
+      `turnstileToken=${encodeURIComponent(captchaToken || "")}`,
       `origin=${encodeURIComponent(window.location.origin || "")}`,
       `submittedAt=${encodeURIComponent(new Date().toISOString())}`
     ].join("&");
@@ -1205,27 +1285,35 @@ function initNewsletter() {
     setMessage(msgEl, "You're in! Check your inbox for the welcome email.");
   };
 
-  const wireNewsletterForm = (form, msgId, source) => {
+  const wireNewsletterForm = async (form, msgId, source) => {
     if (!form) return;
     ensureHoneypot(form);
     form.dataset.loadedAt = String(nowMs());
+    form.dataset.turnstileToken = "";
+    const msgEl = document.getElementById(msgId);
+    await renderCaptcha(form, msgEl);
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const msgEl = document.getElementById(msgId);
       const name = form.querySelector("[name='name']")?.value?.trim() || "";
       const email = form.querySelector("[name='email']")?.value?.trim() || "";
 
+      if (captchaEnabled() && !turnstileWidgets.has(form)) {
+        const ready = await renderCaptcha(form, msgEl);
+        if (!ready) return;
+      }
       if (!validateSubmission(form, email, msgEl)) return;
 
       try {
         setSubmitting(form, true);
         stampSubmitMs();
-        await send(name, email, msgEl, source);
+        await send(name, email, msgEl, source, getCaptchaToken(form));
         form.reset();
+        resetCaptcha(form);
       } catch (err) {
         console.error("Newsletter error:", err);
         setMessage(msgEl, "Subscription failed. Please try again in a moment.", "error");
+        resetCaptcha(form);
       } finally {
         setSubmitting(form, false);
       }

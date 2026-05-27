@@ -42,6 +42,8 @@ npm run assets:version
 npm run test:visual
 ```
 
+For optional Cloudflare Turnstile protection, set `TURNSTILE_SITE_KEY` in `script.js` and validate `turnstileToken` server-side.
+
 ## Main Routes
 
 - `index.html` - homepage

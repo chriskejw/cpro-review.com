@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Run search-related features ONLY when search is enabled
   if (document.body.classList.contains("search-enabled")) {
-    enhanceSearchClear();         // universal clear (❌)
+    enhanceSearchClear();         // universal clear (x)
     wireGlobalSearchNavigation(); // Enter-to-search -> posts.html?q=
   }
 
@@ -206,7 +206,7 @@ function sortItems(items, sort = "newest") {
 
 /**
  * Time-ago with explicit ranges:
- * minutes (1–59), hours (1–23), days (1–13), weeks (2–3), months (1–11), years (1–99)
+ * minutes (1-59), hours (1-23), days (1-13), weeks (2-3), months (1-11), years (1-99)
  */
 function timeAgoLimited(dateStr) {
   const d = parseDateSafe(dateStr);
@@ -220,41 +220,41 @@ function timeAgoLimited(dateStr) {
   const H = 60 * M;          // hour
   const D = 24 * H;          // day
 
-  // Minutes (1–59)
+  // Minutes (1-59)
   const minutes = Math.floor(diffMs / M);
   if (minutes < 60) {
     const m = Math.max(1, minutes); // clamp 1..59
     return `${m} minute${m === 1 ? "" : "s"} ago`;
   }
 
-  // Hours (1–23)
+  // Hours (1-23)
   const hours = Math.floor(diffMs / H);
   if (hours < 24) {
     const h = Math.max(1, hours); // clamp 1..23
     return `${h} hour${h === 1 ? "" : "s"} ago`;
   }
 
-  // Days (1–13)
+  // Days (1-13)
   const days = Math.floor(diffMs / D);
   if (days <= 13) {
     const dNum = Math.max(1, days);
     return `${dNum} day${dNum === 1 ? "" : "s"} ago`;
   }
 
-  // Weeks (2–3) for 14–27 days
+  // Weeks (2-3) for 14-27 days
   if (days < 28) {
     const w = Math.max(2, Math.min(3, Math.floor(days / 7)));
     return `${w} week${w === 1 ? "" : "s"} ago`;
   }
 
-  // Months (1–11) — approx by 30-day months for < 1 year
+  // Months (1-11) - approx by 30-day months for < 1 year
   if (days < 365) {
     let m = Math.floor(days / 30);
     m = Math.max(1, Math.min(11, m));
     return `${m} month${m === 1 ? "" : "s"} ago`;
   }
 
-  // Years (1–99)
+  // Years (1-99)
   let y = Math.floor(days / 365);
   y = Math.max(1, Math.min(99, y));
   return `${y} year${y === 1 ? "" : "s"} ago`;
@@ -283,7 +283,7 @@ function initHome() {
         renderFeaturedPosts(cards, featuredPrimary, featuredSecondary);
         renderHomeCategoryTiles(homeCategoryLinks);
 
-        // Latest posts grid on home — limit to 6
+        // Latest posts grid on home - limit to 6
         if (postGrid) {
           renderCompactPostCards(cards.slice(0, HOME_POSTS_LIMIT), postGrid);
 
@@ -310,7 +310,7 @@ function initHome() {
       });
   }
 
-  // Latest Videos grid on home — limit to 6
+  // Latest Videos grid on home - limit to 6
   const homeVideoGrid = document.getElementById("videoGrid");
   const noVideoResults = document.getElementById("noVideoResults");
 
@@ -353,7 +353,8 @@ function initPostsPage() {
   const pager       = document.getElementById("postsPagination");
   if (!grid || !pager || !catSelect) return;
 
-  const seedQ = getQueryParam("q");
+  const seedQ = getQueryParam("q").toLowerCase().trim();
+  POSTS_STATE.query = seedQ;
   if (seedQ && searchInput) searchInput.value = seedQ;
 
   fetchJson("posts.json")
@@ -379,7 +380,6 @@ function initPostsPage() {
       }
 
       const applyAndRender = () => {
-        POSTS_STATE.query = (searchInput?.value || "").toLowerCase().trim();
         const filtered = sortItems(filterItems(cards, POSTS_STATE.query, POSTS_STATE.category), POSTS_STATE.sort);
         renderPostsPage(grid, pager, filtered, noResults);
       };
@@ -454,7 +454,8 @@ function initVideosPage() {
   const pager       = document.getElementById("videosPagination");
   if (!grid || !pager || !catSelect) return;
 
-  const seedQ = getQueryParam("q");
+  const seedQ = getQueryParam("q").toLowerCase().trim();
+  VIDEOS_STATE.query = seedQ;
   if (seedQ && searchInput) searchInput.value = seedQ;
 
   fetchJson("videos.json")
@@ -480,7 +481,6 @@ function initVideosPage() {
       }
 
       const applyAndRender = () => {
-        VIDEOS_STATE.query = (searchInput?.value || "").toLowerCase().trim();
         const filtered = sortItems(filterItems(videos, VIDEOS_STATE.query, VIDEOS_STATE.category), VIDEOS_STATE.sort);
         renderVideosPage(grid, pager, filtered, noResults);
       };
@@ -1184,7 +1184,7 @@ function initComments() {
 }
 
 /* =========================
-   Universal Search Clear (❌)
+   Universal Search Clear (x)
    ========================= */
 function enhanceSearchClear() {
   const inputs = Array.from(document.querySelectorAll('input[type="search"]'));

@@ -13,7 +13,10 @@ Live site: https://cpro-review.com/
 - Custom domain via `CNAME`
 - Content indexes in `posts.json` and `videos.json`
 
-No build step is required. The site should work directly from GitHub Pages.
+No compile step is required, but we now run two lightweight maintenance steps:
+
+- `npm run assets:version` to bump `style.css` and `script.js` cache-busting query strings in all HTML files.
+- `npm run test:visual` to run a Playwright regression check for post-page layout overlap.
 
 ## Local Preview
 
@@ -30,6 +33,14 @@ http://127.0.0.1:8000/
 ```
 
 Use a local server rather than opening HTML files directly, because shared includes and JSON files are loaded with `fetch()`.
+
+## Maintenance Commands
+
+```powershell
+npm install
+npm run assets:version
+npm run test:visual
+```
 
 ## Main Routes
 

@@ -1,0 +1,13 @@
+{
+  "name": "cpro-review-site",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "assets:version": "powershell -ExecutionPolicy Bypass -File scripts/bump-assets.ps1",
+    "test:visual": "playwright test tests/visual/post-layout.spec.ts",
+    "test:visual:update": "playwright test tests/visual/post-layout.spec.ts --update-snapshots"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.2"
+  }
+}

@@ -113,6 +113,12 @@ article a:focus,
   top:0;
   z-index:1030;
 }
+main > header,
+main header{
+  position:static !important;
+  top:auto !important;
+  z-index:auto !important;
+}
 .navbar{
   background:rgba(255,255,255,.86)!important;
   border-bottom:1px solid rgba(226,232,240,.85);

@@ -14,6 +14,10 @@ const VIDEOS_PER_PAGE = 9;
 const HOME_POSTS_LIMIT  = 6;
 const HOME_VIDEOS_LIMIT = 6;
 const THEME_KEY = "cproreview-theme";
+const NEWSLETTER_MIN_FILL_MS = 2500;
+const NEWSLETTER_COOLDOWN_MS = 45000;
+const NEWSLETTER_TIMEOUT_MS = 12000;
+const NEWSLETTER_RATE_KEY = "cproreview-newsletter-last-submit";
 
 // State
 let ALL_CARDS = [];  // posts
@@ -1103,8 +1107,6 @@ function enableSmoothScroll() {
 /* FORMS */
 // =========================
 function initNewsletter() {
-  // (home hero)
-  const formIndex = document.getElementById("newsletterFormIndex");
   const setSubmitting = (form, isSubmitting) => {
     const btn = form?.querySelector("button[type='submit']");
     const input = form?.querySelector("input[type='email']");
@@ -1115,59 +1117,128 @@ function initNewsletter() {
     }
     if (input) input.disabled = isSubmitting;
   };
-  const send = async (name, email, msgEl) => {
-    await fetch(GOOGLE_APPS_SCRIPT_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}`
-    });
-    if (!window.emailjs) throw new Error("EmailJS is not available");
-    await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { name, email });
-    if (msgEl) {
-      msgEl.className = "mt-2 text-white-75";
-      msgEl.innerHTML = `You're in! Check your inbox, then grab your <a class="text-white fw-bold" href="bonus.html">subscriber bonuses</a>.`;
+
+  const setMessage = (msgEl, message, type = "success") => {
+    if (!msgEl) return;
+    msgEl.className = type === "error" ? "mt-2 small text-warning" : "mt-2 text-white-75";
+    msgEl.textContent = message;
+  };
+
+  const ensureHoneypot = (form) => {
+    if (!form || form.querySelector("[name='website']")) return;
+    const trap = document.createElement("div");
+    trap.setAttribute("aria-hidden", "true");
+    trap.style.cssText = "position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.name = "website";
+    input.tabIndex = -1;
+    input.autocomplete = "off";
+    trap.appendChild(input);
+    form.appendChild(trap);
+  };
+
+  const nowMs = () => Date.now();
+  const lastSubmitMs = () => {
+    try { return Number(localStorage.getItem(NEWSLETTER_RATE_KEY) || 0); } catch { return 0; }
+  };
+  const stampSubmitMs = () => {
+    try { localStorage.setItem(NEWSLETTER_RATE_KEY, String(nowMs())); } catch {}
+  };
+
+  const validateSubmission = (form, email, msgEl) => {
+    const hpValue = form.querySelector("[name='website']")?.value?.trim();
+    if (hpValue) {
+      setMessage(msgEl, "Thanks! Please check your inbox shortly.");
+      return false;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i.test(email) || email.length > 254) {
+      setMessage(msgEl, "Please enter a valid email address.", "error");
+      return false;
+    }
+
+    const loadedAt = Number(form.dataset.loadedAt || 0);
+    if (loadedAt && nowMs() - loadedAt < NEWSLETTER_MIN_FILL_MS) {
+      setMessage(msgEl, "Please wait a moment, then try again.", "error");
+      return false;
+    }
+
+    const elapsed = nowMs() - lastSubmitMs();
+    if (elapsed >= 0 && elapsed < NEWSLETTER_COOLDOWN_MS) {
+      const secs = Math.ceil((NEWSLETTER_COOLDOWN_MS - elapsed) / 1000);
+      setMessage(msgEl, `Please wait ${secs}s before another signup.`, "error");
+      return false;
+    }
+
+    return true;
+  };
+
+  const postWithTimeout = async (url, options, timeoutMs) => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      return await fetch(url, { ...options, signal: controller.signal });
+    } finally {
+      clearTimeout(timer);
     }
   };
 
-  if (formIndex) {
-    formIndex.addEventListener("submit", async (e) => {
+  const send = async (name, email, msgEl, source) => {
+    const body = [
+      `email=${encodeURIComponent(email)}`,
+      `name=${encodeURIComponent(name)}`,
+      `source=${encodeURIComponent(source)}`,
+      `origin=${encodeURIComponent(window.location.origin || "")}`,
+      `submittedAt=${encodeURIComponent(new Date().toISOString())}`
+    ].join("&");
+
+    await postWithTimeout(GOOGLE_APPS_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body
+    }, NEWSLETTER_TIMEOUT_MS);
+
+    if (!window.emailjs) throw new Error("EmailJS is not available");
+    await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { name, email, source });
+    setMessage(msgEl, "You're in! Check your inbox for the welcome email.");
+  };
+
+  const wireNewsletterForm = (form, msgId, source) => {
+    if (!form) return;
+    ensureHoneypot(form);
+    form.dataset.loadedAt = String(nowMs());
+
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const name  = "";
-      const email = formIndex.querySelector("[name='email']")?.value?.trim() || "";
-      if (!email) return alert("Please enter an email");
+      const msgEl = document.getElementById(msgId);
+      const name = form.querySelector("[name='name']")?.value?.trim() || "";
+      const email = form.querySelector("[name='email']")?.value?.trim() || "";
+
+      if (!validateSubmission(form, email, msgEl)) return;
+
       try {
-        setSubmitting(formIndex, true);
-        await send(name, email, document.getElementById("msgIndex"));
-        formIndex.reset();
+        setSubmitting(form, true);
+        stampSubmitMs();
+        await send(name, email, msgEl, source);
+        form.reset();
       } catch (err) {
         console.error("Newsletter error:", err);
-        alert("Subscription failed. Please try again in a moment.");
+        setMessage(msgEl, "Subscription failed. Please try again in a moment.", "error");
       } finally {
-        setSubmitting(formIndex, false);
+        setSubmitting(form, false);
       }
     });
-  }
+  };
+
+  // (home hero)
+  const formIndex = document.getElementById("newsletterFormIndex");
+  wireNewsletterForm(formIndex, "msgIndex", "home");
 
   // (newsletter.html page)
   const form = document.getElementById("newsletterForm");
-  if (!form) return;
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const name  = form.querySelector("[name='name']")?.value?.trim() || "";
-    const email = form.querySelector("[name='email']")?.value?.trim() || "";
-    if (!email) return alert("Please enter an email");
-    try {
-      setSubmitting(form, true);
-      await send(name, email, document.getElementById("msg"));
-      form.reset();
-    } catch (err) {
-      console.error("Newsletter error:", err);
-      alert("Subscription failed. Please try again in a moment.");
-    } finally {
-      setSubmitting(form, false);
-    }
-  });
+  wireNewsletterForm(form, "msg", "newsletter-page");
 }
 
 function initComments() {

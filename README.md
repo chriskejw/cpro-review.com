@@ -167,6 +167,7 @@ See [docs/deployment.md](docs/deployment.md) for deployment checks.
 - [CONTRIBUTING.md](CONTRIBUTING.md)
 - [docs/content-guide.md](docs/content-guide.md)
 - [docs/deployment.md](docs/deployment.md)
+- [docs/security-hardening-checklist.md](docs/security-hardening-checklist.md)
 
 ## Roadmap
 

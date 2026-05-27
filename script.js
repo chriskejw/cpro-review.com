@@ -1223,7 +1223,7 @@ function initNewsletter() {
   const validateSubmission = (form, email, msgEl) => {
     const hpValue = form.querySelector("[name='website']")?.value?.trim();
     if (hpValue) {
-      setMessage(msgEl, "Thanks! Please check your inbox shortly.");
+      setMessage(msgEl, "Thanks! Your submission was received.");
       return false;
     }
 
@@ -1270,6 +1270,7 @@ function initNewsletter() {
       `source=${encodeURIComponent(source)}`,
       `turnstileToken=${encodeURIComponent(captchaToken || "")}`,
       `origin=${encodeURIComponent(window.location.origin || "")}`,
+      `userAgent=${encodeURIComponent(navigator.userAgent || "")}`,
       `submittedAt=${encodeURIComponent(new Date().toISOString())}`
     ].join("&");
 
@@ -1281,7 +1282,7 @@ function initNewsletter() {
     }, NEWSLETTER_TIMEOUT_MS);
 
     // Primary submit succeeded; treat this as success for UX.
-    setMessage(msgEl, "You're in! Check your inbox for the welcome email.");
+    setMessage(msgEl, "You're subscribed successfully.");
 
     // Secondary email automation should never block signup success.
     if (!window.emailjs) return;

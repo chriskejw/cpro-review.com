@@ -43,6 +43,7 @@ npm run test:visual
 ```
 
 For optional Cloudflare Turnstile protection, set `TURNSTILE_SITE_KEY` in `script.js` and validate `turnstileToken` server-side.
+Use [docs/apps-script-secure-newsletter.gs](docs/apps-script-secure-newsletter.gs) as the secure Apps Script backend template.
 
 ## Main Routes
 

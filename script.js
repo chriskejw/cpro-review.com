@@ -2,9 +2,6 @@
 // CONFIG (production keys/ids)
 // =========================
 const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby0EZ5ikvXUlHwYbkrI78kLSth8iPKwzmzPNeduv-QW5qMmnFkjIogtDQmJYe7RD8fG/exec";
-const EMAILJS_PUBLIC_KEY     = "Ow9sGUE6hSO-EpF_T";
-const EMAILJS_SERVICE_ID     = "service_8fe6yij";
-const EMAILJS_TEMPLATE_ID    = "template_wxvjwg9";
 const UTTERANCES_REPO        = "chriskejw/cpro-review.com";
 
 const POSTS_PER_PAGE  = 9;
@@ -86,9 +83,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Footer year
   const y = document.getElementById("year");
   if (y) y.textContent = new Date().getFullYear();
-
-  // Third-party init
-  if (window.emailjs && EMAILJS_PUBLIC_KEY) emailjs.init(EMAILJS_PUBLIC_KEY);
 
   initHome();
   initPostsPage();
@@ -1284,13 +1278,7 @@ function initNewsletter() {
     // Primary submit succeeded; treat this as success for UX.
     setMessage(msgEl, "You're subscribed successfully.");
 
-    // Secondary email automation should never block signup success.
-    if (!window.emailjs) return;
-    try {
-      await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { name, email, source });
-    } catch (emailErr) {
-      console.warn("EmailJS send failed after successful signup:", emailErr);
-    }
+    // Apps Script is the only persistence path.
   };
 
   const wireNewsletterForm = async (form, msgId, source) => {

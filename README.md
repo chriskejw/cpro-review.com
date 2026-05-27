@@ -42,8 +42,12 @@ npm run assets:version
 npm run test:visual
 ```
 
-For optional Cloudflare Turnstile protection, set `TURNSTILE_SITE_KEY` in `script.js` and validate `turnstileToken` server-side.
-Use [docs/apps-script-secure-newsletter.gs](docs/apps-script-secure-newsletter.gs) as the secure Apps Script backend template.
+Cloudflare Turnstile is enabled client-side and validated server-side in Apps Script.
+Use [docs/apps-script-secure-newsletter.gs](docs/apps-script-secure-newsletter.gs) as the backend template.
+That template includes:
+- duplicate-email prevention
+- daily signup cap (`MAX_SIGNUPS_PER_DAY`)
+- security logging (`LOG_TAB`, default `SignupLogs`)
 
 ## Main Routes
 

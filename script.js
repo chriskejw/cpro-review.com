@@ -18,7 +18,7 @@ const NEWSLETTER_MIN_FILL_MS = 2500;
 const NEWSLETTER_COOLDOWN_MS = 45000;
 const NEWSLETTER_TIMEOUT_MS = 12000;
 const NEWSLETTER_RATE_KEY = "cproreview-newsletter-last-submit";
-const TURNSTILE_SITE_KEY = "";
+const TURNSTILE_SITE_KEY = "0x4AAAAAADXIx5HahU_Sx13r";
 const TURNSTILE_SCRIPT_URL = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
 
 // State
